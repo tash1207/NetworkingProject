@@ -4,3 +4,15 @@
 *.jar
 *.war
 *.ear
+
+# Eclipse
+
+.project
+.metadata
+.classpath
+.settings/
+.loadpath
+.buildpath
+bin/
+
+.DS_Store
