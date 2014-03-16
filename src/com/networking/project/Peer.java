@@ -82,18 +82,17 @@ public class Peer {
 		};
 		Timer timer_preferred = new Timer();
 		timer_preferred.scheduleAtFixedRate(task_preferred, 0, unchokingInterval * 1000);
-		/*
+		
 		// Set timer for optimistically unchoking a neighbor
 		TimerTask task_unchoke = new TimerTask() {
 			
 			@Override
 			public void run() {
-				// TODO call method to optimistically unchoke
+				getAndRemoveRandomChokedPeer();
 			}
 		};
 		Timer timer_unchoke = new Timer();
 		timer_unchoke.scheduleAtFixedRate(task_unchoke, 0, optimisticUnchokingInterval * 1000);
-		*/
 	}
 
 	public static void sendHandshake(RemotePeer peer) {
