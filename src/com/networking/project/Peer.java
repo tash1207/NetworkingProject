@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +23,7 @@ public class Peer {
     private ConcurrentLinkedQueue<RemotePeer> remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
+	private HashSet<RemotePeer> interestedRemotePeers;
 
     
     /**
@@ -37,6 +39,9 @@ public class Peer {
 			fileName = values[3];
 			fileSize = Integer.parseInt(values[4]);
 			pieceSize = Integer.parseInt(values[5]);
+			interestedRemotePeers = new HashSet<RemotePeer>();
+			chokedRemotePeers = new ArrayList<RemotePeer>();
+			unchokedRemotePeers = new ArrayList<RemotePeer>();
 		}
 
     }
@@ -148,11 +153,34 @@ public class Peer {
     	return preferredNeighbors;
     }
 	
+    /**
+     * Return an interested RemotePeer that has been added to the unchoked list
+     * and removed from the choked list.
+     * 
+     * If there are no choked remote peers that are interested, then no peer is
+     * returned.
+     * 
+     * @return
+     */
 	public RemotePeer getAndRemoveRandomChokedPeer() {
-		int index = (int)(Math.random() * this.chokedRemotePeers.size());
-		RemotePeer randomChokedPeer = this.chokedRemotePeers.get(index);
+		if (interestedRemotePeers.size() == 0) {
+			return null;
+		}
+
+        HashSet<RemotePeer> chokedPeers = new HashSet<RemotePeer>(chokedRemotePeers);
+        chokedPeers.retainAll(interestedRemotePeers);
+        ArrayList<RemotePeer> interestedChokedPeers = new ArrayList<RemotePeer>(chokedPeers);
+        
+        if (interestedChokedPeers.size() == 0) {
+        	return null;
+        }
+
+		int index = (int)(Math.random() * interestedChokedPeers.size());
+		RemotePeer randomChokedPeer = interestedChokedPeers.get(index);
+
 		this.chokedRemotePeers.remove(randomChokedPeer);
 		this.unchokedRemotePeers.add(randomChokedPeer);
+
 		return randomChokedPeer;
 	}
 	
@@ -171,5 +199,12 @@ public class Peer {
 	public boolean removeUnchokedRemotePeer(RemotePeer peer) {
 		return this.unchokedRemotePeers.remove(peer);
 	}
+	
+	public boolean addInterestedRemotePeer(RemotePeer peer) {
+		return this.interestedRemotePeers.add(peer);
+	}
 
+	public boolean removeInterestedRemotePeer(RemotePeer peer) {
+		return this.interestedRemotePeers.remove(peer);
+	}
 }
