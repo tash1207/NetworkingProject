@@ -11,9 +11,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.lang.Math;
 
 public class Peer {
+	private byte[] bitfield;
+	
 	int numPreferredNeighbors;
 	int unchokingInterval;
 	int optimisticUnchokingInterval;
@@ -22,7 +23,7 @@ public class Peer {
 	int pieceSize;
 
     private int peerid;
-    private ConcurrentLinkedQueue<RemotePeer> remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
+    private ConcurrentLinkedQueue<RemotePeer> remotePeers;
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
 	private HashSet<RemotePeer> interestedRemotePeers;
@@ -45,10 +46,12 @@ public class Peer {
 			fileName = values[3];
 			fileSize = Integer.parseInt(values[4]);
 			pieceSize = Integer.parseInt(values[5]);
-			interestedRemotePeers = new HashSet<RemotePeer>();
-			chokedRemotePeers = new ArrayList<RemotePeer>();
-			unchokedRemotePeers = new ArrayList<RemotePeer>();
 		}
+		
+		remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
+		interestedRemotePeers = new HashSet<RemotePeer>();
+		chokedRemotePeers = new ArrayList<RemotePeer>();
+		unchokedRemotePeers = new ArrayList<RemotePeer>();
 		// TODO instantiate remotePeers and call setTimers();
     }
 
@@ -164,26 +167,43 @@ public class Peer {
      * @return
      */
     public ArrayList<RemotePeer> selectNewPreferredNeighbors() {
-    	// TODO randomly select preferred neighbors if peer has completed downloading the file
+    	// Check if the peer has completed downloading the file
+    	boolean hasEntireFile = true;
+    	for (int i = 0; i < bitfield.length; i++) {
+    		if (bitfield[i] != 0xFFFF) hasEntireFile = false;
+    	}
     	
     	ArrayList<RemotePeer> preferredNeighbors = new ArrayList<RemotePeer>();
-    	Map<Integer, RemotePeer> download_rates = new TreeMap<Integer, RemotePeer>(Collections.reverseOrder());
     	
-    	// Iterate over all remote peers and find their download rates
-    	// TODO check that remote peer is interested in peer
-    	Iterator<RemotePeer> it_peers = remotePeers.iterator();
-    	while (it_peers.hasNext()) {
-    		RemotePeer rp = it_peers.next();
-    		download_rates.put(rp.getDownloadRate(), rp);
+    	// Randomly select preferred neighbors if peer has entire file
+    	if (hasEntireFile) {
+    		ArrayList<RemotePeer> interestedPeers = new ArrayList<RemotePeer>(interestedRemotePeers);
+    		for (int i = 0; i < numPreferredNeighbors; i++) {
+        		int index = (int)(Math.random() * interestedPeers.size());
+        		preferredNeighbors.add(interestedPeers.get(index));
+    		}
     	}
-    	// Iterate over our sorted map of download rates and return <numPreferredNeighbors> remote peers
-    	Iterator<Integer> it_rates = download_rates.keySet().iterator();
-    	int i = 0;
-    	while (it_rates.hasNext() && i < numPreferredNeighbors) {
-    		preferredNeighbors.add(download_rates.get(it_rates.next()));
-    		//System.out.println(preferredNeighbors.get(i).getPeerid() + ": " + preferredNeighbors.get(i).getDownloadRate());
-    		i++;
+    	
+    	// Otherwise, select interested remote peers with highest download rates
+    	else {
+	    	Map<Integer, RemotePeer> download_rates = new TreeMap<Integer, RemotePeer>(Collections.reverseOrder());
+	    	
+	    	// Iterate over all interested remote peers and find their download rates
+	    	Iterator<RemotePeer> it_peers = interestedRemotePeers.iterator();
+	    	while (it_peers.hasNext()) {
+	    		RemotePeer rp = it_peers.next();
+	    		download_rates.put(rp.getDownloadRate(), rp);
+	    	}
+	    	// Iterate over our sorted map of download rates and return <numPreferredNeighbors> remote peers
+	    	Iterator<Integer> it_rates = download_rates.keySet().iterator();
+	    	int i = 0;
+	    	while (it_rates.hasNext() && i < numPreferredNeighbors) {
+	    		preferredNeighbors.add(download_rates.get(it_rates.next()));
+	    		//System.out.println(preferredNeighbors.get(i).getPeerid() + ": " + preferredNeighbors.get(i).getDownloadRate());
+	    		i++;
+	    	}
     	}
+    	
     	return preferredNeighbors;
     }
 	
