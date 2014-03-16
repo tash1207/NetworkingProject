@@ -1,38 +1,46 @@
 package com.networking.project;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class Main {
 
 	public static void main(String[] args) {
-        System.out.println("Spawning first peer");
-        Peer peer = new Peer();
-
         HashMap<String, Integer> peerConfig = new HashMap<String, Integer>();
+        HashMap<Integer, String> reversePeerConfig = new HashMap<Integer, String>();
 
-        peerConfig.put("localhost:4002",1);
+        peerConfig.put("localhost:4003",1);
         peerConfig.put("localhost:4003",2);
 
+        reversePeerConfig.put(1, "localhost:4002");
+        reversePeerConfig.put(2, "localhost:4003");
 
-        ListeningServer listeningServer = new ListeningServer(peerConfig, peer, 1, 4001);
-        // Spawn the background listening server
-        System.out.println("Spawning listening server!");
-        (new Thread(listeningServer)).start();
-        System.out.println("Server spawned");
+        System.out.println("Spawning first peer");
+        Peer peer = new Peer(1,4002);
 
-        Peer otherPeer = new Peer();
+        System.out.println("Spawning second peer");
+        Peer peer2 = new Peer(2,4003);
+        Main.bootstrapPeer(peer2,2,reversePeerConfig);
 
-        System.out.println("Spawning remote connection");
-
-        RemotePeerConnection otherPeerConn = new RemotePeerConnection(2, "localhost", 4001);
-
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
 	}
+
+    public static void bootstrapPeer(Peer peer, int peerid,  HashMap<Integer, String> reversePeerConfig){
+        int currentPeerid = peerid - 1;
+
+        while (currentPeerid > 0){
+            String address = reversePeerConfig.get(currentPeerid);
+            String hostname = address.split(":")[0];
+            String port = address.split(":")[1];
+
+            RemotePeer remote = new RemotePeer(1, "localhost", 4002);
+            remote.startConnection();
+
+            peer.onRemotePeerConnect(remote);
+
+            currentPeerid--;
+        }
+
+    }
 
 }

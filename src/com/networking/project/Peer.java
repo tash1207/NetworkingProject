@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.lang.Math;
 
 public class Peer {
 	int numPreferredNeighbors;
@@ -20,6 +21,7 @@ public class Peer {
 	int fileSize;
 	int pieceSize;
 
+    private int peerid;
     private ConcurrentLinkedQueue<RemotePeer> remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
@@ -29,7 +31,11 @@ public class Peer {
     /**
      *  "Whenever a peer starts, it should read the file Common.cfg and set up the corresponding variables."
      */
-    public Peer() {
+    public Peer(int peerid, int port) {
+
+        ListeningServer listeningServer = new ListeningServer(this, peerid, port);
+        (new Thread(listeningServer)).start();
+
     	String[] values = readCommonConfig();
 		if (values != null) {
 			this.numPreferredNeighbors = Integer.parseInt(values[0]);
@@ -45,7 +51,7 @@ public class Peer {
 		}
 		// TODO instantiate remotePeers and call setTimers();
     }
-    
+
     /**
      * Read the Common.cfg file and only return the values not the keys
      * @return
@@ -150,7 +156,8 @@ public class Peer {
 	public boolean onRemotePeerDisconnect(RemotePeer peer) {
 		return remotePeers.remove(peer);
 	}
-	
+
+
     /**
      * Returns an ArrayList of RemotePeers of size numPreferredNeighbors who have the largest download rates
      * to the peer and are interested in the peer

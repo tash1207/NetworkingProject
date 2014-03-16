@@ -5,30 +5,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 
 public class ListeningServer implements Runnable{
 
     private final int localPeerId;
     private ServerSocket server;
     private int peerid;
-    private HashMap<String, Integer> peeridMap;
     private Peer localPeer;
     private int port;
 
 
-    public ListeningServer(HashMap<String, Integer> peeridMap, Peer localPeer, int localPeerId, int port){
-        this.peeridMap = peeridMap;
+    public ListeningServer(Peer localPeer, int localPeerId, int port){
         this.localPeer = localPeer;
         this.port = port;
         this.localPeerId = localPeerId;
     }
 	
-	public static void attachRemotePeer(HashMap<String, Integer> peeridMap, Socket sock, Peer localPeer, int localPeerId){
+	public static void attachRemotePeer(Socket sock, Peer localPeer, int localPeerId){
         String hostname = sock.getInetAddress().getHostName();
         int port = sock.getPort();
-
-        //int remotePeerid = peeridMap.get(hostname+":"+port);
 
         RemotePeerConnection conn = new RemotePeerConnection(localPeerId, sock);
 
@@ -48,7 +43,7 @@ public class ListeningServer implements Runnable{
 					final Socket sock = server.accept();
 					new Thread() {
 						public void run() {
-							ListeningServer.attachRemotePeer(peeridMap, sock, localPeer, localPeerId);
+							ListeningServer.attachRemotePeer(sock, localPeer, localPeerId);
 						}
 					}.start();
 				}
