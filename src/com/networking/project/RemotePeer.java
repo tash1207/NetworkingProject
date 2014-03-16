@@ -16,8 +16,8 @@ public class RemotePeer implements Connectable{
 	
 	private RemotePeerConnection conn;
 	
-	private ConcurrentLinkedQueue<Message> messageQueue;
-    private ConcurrentLinkedQueue<Message> outgoingMessageQueue;
+	private ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
+    private ConcurrentLinkedQueue<Message> outgoingMessageQueue = new ConcurrentLinkedQueue<Message>();
 
     private Queue<Connectable> connectablesToNotify;
 
@@ -79,6 +79,8 @@ public class RemotePeer implements Connectable{
     public boolean appendReceivedMessageToQueue(byte[] message) {
         // Parse the byte data into a message
 
+        System.out.println("Remote peer got a message!");
+
         Message parsedMessage = new Message(message);
 
         // put it into the queue
@@ -111,6 +113,8 @@ public class RemotePeer implements Connectable{
 
 		
 		conn = new RemotePeerConnection(peerid, hostname, port);
+        conn.saveRemotePeerRef(this);
+        (new Thread(conn)).start();
 
 		return true;
 	}

@@ -25,7 +25,7 @@ public class RemotePeerConnection implements Runnable{
 
         try {
             sock = new Socket(hostname, port);
-            RemotePeerConnection.checkHandshake(sock, peerid);
+            this.checkHandshake(sock, peerid);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,13 +33,13 @@ public class RemotePeerConnection implements Runnable{
     }
 
     public RemotePeerConnection(int peerid, Socket sock){
-        RemotePeerConnection.checkHandshake(sock, peerid);
+        this.checkHandshake(sock, peerid);
     }
 
-    public static void checkHandshake(Socket sock, int peerid){
+    public void checkHandshake(Socket sock, int peerid){
         try {
-            InputStream in = sock.getInputStream();
-            OutputStream out = sock.getOutputStream();
+            in = sock.getInputStream();
+            out = sock.getOutputStream();
 
             if ( sendHandShake(out, in, peerid) ) {
                 //remotePeer.onConnect();
@@ -56,13 +56,18 @@ public class RemotePeerConnection implements Runnable{
 
     public void sendMessage(byte[] message){
         try {
+            System.out.println("Sending message!");
             out.write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void parseInputStreamAndAddToQueue(InputStream is, RemotePeer peer){
+    public void saveRemotePeerRef(RemotePeer rp){
+        this.remotePeer = rp;
+    }
+
+    public static void parseInputStreamAndAddToQueue(InputStream is, RemotePeer remotePeer){
         while(true){
             byte[] msgLength = new byte[4];
 
@@ -84,7 +89,8 @@ public class RemotePeerConnection implements Runnable{
                 wholeMessage.put(msgLength);
                 wholeMessage.put(restMsg);
 
-                peer.appendReceivedMessageToQueue(wholeMessage.array());
+                remotePeer.appendReceivedMessageToQueue(wholeMessage.array());
+                System.out.println("Reading message");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -115,10 +121,6 @@ public class RemotePeerConnection implements Runnable{
     }
 	
 	public void run(){
-		try {
-            RemotePeerConnection.parseInputStreamAndAddToQueue(in, remotePeer);
-		} catch (Exception e) {
-			System.out.println("SOMETHING REAL BAD HAPPENED OPENING THE SOCKET" + e);
-		}
+        RemotePeerConnection.parseInputStreamAndAddToQueue(in, remotePeer);
 	}
 }

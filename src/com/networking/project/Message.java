@@ -62,13 +62,14 @@ public class Message {
 		return b.array();
 	}
 
+
     public Message(byte[] serializedMessage) {
     	try {
     		//parse the message here
-        	this.messageLength = (serializedMessage[0] & 0xFF) |
-        			        (serializedMessage[1] & 0xFF) << 8 |
-        			        (serializedMessage[2] & 0xFF) << 16 |
-        			        (serializedMessage[3] & 0xFF) << 24;
+        	this.messageLength = (serializedMessage[3] & 0xFF) |
+        			        (serializedMessage[2] & 0xFF) << 8 |
+        			        (serializedMessage[1] & 0xFF) << 16 |
+        			        (serializedMessage[0] & 0xFF) << 24;
         	this.messageType = serializedMessage[4];
         	ByteBuffer b = ByteBuffer.allocate(messageLength - 1);
         	
@@ -79,6 +80,7 @@ public class Message {
         	
     	} catch (Exception e) {
     		// serializedMessage not correct length
+            e.printStackTrace();
     	}
     }
 

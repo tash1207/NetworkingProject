@@ -38,6 +38,13 @@ public class Main {
         Peer peer2 = new Peer(2,4003);
         Main.bootstrapPeer(peer2,2,reversePeerConfig);
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        peer.chokeAllRemotePeers();
+
 
 	}
 

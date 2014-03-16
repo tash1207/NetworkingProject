@@ -111,6 +111,7 @@ public class Peer {
 		byte messageType = 0;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
+        peer.sendMessage(message);
 	}
 
 	public static void unchoke(RemotePeer peer) {
@@ -205,6 +206,17 @@ public class Peer {
     	}
     	
     	return preferredNeighbors;
+    }
+
+    public void chokeAllRemotePeers(){
+        Iterator<RemotePeer> peerIterator =  remotePeers.iterator();
+        while(peerIterator.hasNext()){
+            choke(peerIterator.next());
+        }
+
+
+
+
     }
 	
     /**
