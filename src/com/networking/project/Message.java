@@ -1,5 +1,7 @@
 package com.networking.project;
 
+import java.nio.ByteBuffer;
+
 public class Message {
 	/**
 	 * Content differs based on messageType
@@ -24,6 +26,15 @@ public class Message {
 		this.messagePayload = messagePayload;
 		this.messageType = messageType;
 		messageLength =  1 + messagePayload.length;
+	}
+	
+	public byte[] toByteArray() {
+		ByteBuffer b = ByteBuffer.allocate(messageLength + 4);
+		b.putInt(messageLength);
+		b.put(messageType);
+		b.put(messagePayload);
+
+		return b.array();
 	}
 	
 }
