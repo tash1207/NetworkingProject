@@ -268,7 +268,7 @@ public class Peer {
 		while (iter.hasNext()) {
 			RemotePeer currentPeer = iter.next();
 			Message incomingMessage = currentPeer.getNextIncomingMessage();
-			parseAndReplyToMessage(incomingMessage);
+			parseAndReplyToMessage(incomingMessage, currentPeer);
 		}
 	}
 	
@@ -294,7 +294,7 @@ public class Peer {
 		// have
 		case 4:
 			// should I send an interested or non interested message?
-			 if (hasInterestingPieces(bitfield)) {
+			 if (peer.hasInterestingPieces(bitfield)) {
 				 interested(peer);
 			 } else {
 				 notInterested(peer);
@@ -303,7 +303,7 @@ public class Peer {
 		// bitfield
 		case 5:
 			// should I send an interested or non interested message?
-			 if (hasInterestingPieces(bitfield)) {
+			 if (peer.hasInterestingPieces(bitfield)) {
 				 interested(peer);
 			 } else {
 				 notInterested(peer);
