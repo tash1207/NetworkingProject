@@ -1,0 +1,45 @@
+Peer
+- peerid
+- address
+- port
+- bitfield
+- listeningServer
+_________
+// reads in from PeerInfo.cfg to set it's attributes
+	- if has is 1, set bitfield to all 1s
+	- if has is 0, set bitfield to all 0s
+// reads in from Common.cfg and sets those variables
+// Listening Server listens on <port>
+// When a remote peer connects, spawn a new thread
+// Connect with all previous peers that have been created (by new RemotePeer(<peerid>))
+	- TCP connection from Peer to RemotePeer, established
+	- Peer sends handshake message to RemotePeer
+	- RemotePeer sends handshake message to Peer
+	- Peer checks that handshake message is correct and peerid matches
+	- Peer sends bitfield message
+	- RemotePeer sends bitfield message if it has pieces (otherwise it doesn't send a message)
+	- Peer checks if RemotePeer has interesting pieces
+	- Peer sends interested or not interested message
+// From Common.cfg, randomly connect with <numPreferredNeighbors> that have interesting bits
+
+
+RemotePeer
+- peerid
+- address
+- port
+- bitfield
+- listeningServer
+_________
+// In the constructor method, start a socket connection with the peer that created it
+// Keep a reference to the output and input of the socket
+
+
+Listening Server
+- Listens for connections on a certain <port>
+- When a connection is made, create a new RemotePeer(<peerid>)
+
+
+Message
+- messagePayload
+- messageType
+- messageLength
