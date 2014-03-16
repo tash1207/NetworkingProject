@@ -19,7 +19,7 @@ public class Peer {
 	int fileSize;
 	int pieceSize;
 
-	private ConcurrentLinkedQueue<RemotePeer> remotePeers;
+    private ConcurrentLinkedQueue<RemotePeer> remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
 
@@ -113,9 +113,10 @@ public class Peer {
 		Message message = new Message(messageType, payload);
 	}
 
-	public boolean onRemotePeerConnect(RemotePeer peer) {
-		return remotePeers.offer(peer);
-	}
+    public boolean onRemotePeerConnect(RemotePeer peer){
+        System.out.println("got a remote peer connected!!");
+        return remotePeers.offer(peer);
+    }
 
 	public boolean onRemotePeerDisconnect(RemotePeer peer) {
 		return remotePeers.remove(peer);

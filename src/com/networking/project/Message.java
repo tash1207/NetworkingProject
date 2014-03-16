@@ -23,12 +23,33 @@ public class Message {
 	 * Length of the messageType + messagePayload but not the messageLength itself
 	 */
 	int messageLength;
-	
+
 	public Message(byte messageType, byte[] messagePayload) {
 		this.messagePayload = messagePayload;
 		this.messageType = messageType;
 		messageLength =  1 + messagePayload.length;
 	}
+
+    public static byte[] createHandshake(int peerid){
+        ByteBuffer message = ByteBuffer.allocate(32);
+
+        byte[] hello = ("HELLO").getBytes();
+        ByteBuffer zeros = ByteBuffer.allocate(23);
+        ByteBuffer peer = ByteBuffer.allocate(4);
+        peer.putInt(peerid);
+
+        message.put(hello);
+        message.put(zeros);
+        message.put(peer);
+
+        return message.array();
+    }
+
+    public static boolean checkHandshake(byte[] handshake){
+        return true;
+    }
+
+
 
 	public byte[] toByteArray() {
 		ByteBuffer b = ByteBuffer.allocate(messageLength + 4);
@@ -38,7 +59,7 @@ public class Message {
 
 		return b.array();
 	}
-	
+
     public Message(byte[] serializedMessage) {
     	try {
     		//parse the message here

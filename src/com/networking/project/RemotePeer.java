@@ -3,29 +3,34 @@ package com.networking.project;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Queue;
 import java.util.concurrent.*;
 
-public class RemotePeer {
-	
+public class RemotePeer implements Connectable{
+
 	private byte[] bitfield;
 	
 	private int peerid;
-	private String address;
+	private String hostname;
 	private int port;
-	
-	private OutputStream out;
-	private InputStream in;
 	
 	private RemotePeerConnection conn;
 	
 	private ConcurrentLinkedQueue<Message> messageQueue;
     private ConcurrentLinkedQueue<Message> outgoingMessageQueue;
 
-	public RemotePeer(String address, int port){
-		//We need to create the socket here
+    private Queue<Connectable> connectablesToNotify;
+
+	public RemotePeer(int peerid, String hostanme, int port){
+        this.peerid = peerid;
+        this.hostname = hostname;
+        this.port = port;
 	}
 	
-	public RemotePeer(String address, int port, OutputStream out, InputStream in, Socket sock){
+	public RemotePeer(int peerid, RemotePeerConnection remotePeerConn){
+        this.peerid = peerid;
+        conn = remotePeerConn;
+
 	}
 	
 	public int getPeerid() {
@@ -36,7 +41,7 @@ public class RemotePeer {
 	 * Compares two bitfields and sees if there is anything of interest.
 	 * Meaning if there is a piece that this remote peer has that the input
 	 * bitfield doesn't have.
-	 * @param message
+	 * @param peerBitfield
 	 * @return
 	 */
 	public boolean hasInterestingPieces(byte[] peerBitfield) {
@@ -51,11 +56,12 @@ public class RemotePeer {
 	
 	/**
 	 * Send a message to the remote peer. Will return true or false if the message was sent successfully.
-	 * @param message
+	 * @param m
 	 * @return boolean
 	 */
-	public boolean sendMessage(Message m) {
-		return false;
+	public boolean sendMessage(Message m){
+        conn.sendMessage(m.toByteArray());
+        return true;
 	}
 
     /**
@@ -83,8 +89,13 @@ public class RemotePeer {
         return outgoingMessageQueue.poll();
     }
 
+    public boolean attachConnectable(Connectable c){
+        return connectablesToNotify.offer(c);
+    }
+
     // We'll Call this method when we start the connection
     public void onConnect() {
+
 
     }
 
@@ -99,16 +110,9 @@ public class RemotePeer {
 		// we need all that running in a separate thread 
 
 		
-		RemotePeerConnection conn;
-		return false;
-	}
+		conn = new RemotePeerConnection(peerid, hostname, port);
 
-	public void updateOutputStream(OutputStream out) {
-		this.out = out;
-	}
-	
-	public void updateInputStream(InputStream in) {
-		this.in = in;
+		return true;
 	}
 
 }
