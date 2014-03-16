@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-public class RemotePeer{
+public class RemotePeer {
 	
 	private byte[] bitfield;
 	
@@ -39,7 +39,13 @@ public class RemotePeer{
 	 * @param message
 	 * @return
 	 */
-	public boolean hasInterestingPieces(byte[] otherBitfield){
+	public boolean hasInterestingPieces(byte[] peerBitfield) {
+		// Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
+		for (int i = 0; i < bitfield.length; i++) {
+			if (bitfield[i] > peerBitfield[i]) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -48,7 +54,7 @@ public class RemotePeer{
 	 * @param message
 	 * @return boolean
 	 */
-	public boolean sendMessage(Message m){
+	public boolean sendMessage(Message m) {
 		return false;
 	}
 
@@ -56,15 +62,15 @@ public class RemotePeer{
      * returns a download rate in Kb/s
      * @return
      */
-    public int getDownloadRate(){
+    public int getDownloadRate() {
         return 0;
     }
 
-    public Message getNextIncomingMessage(){
+    public Message getNextIncomingMessage() {
         return messageQueue.poll();
     }
 
-    public boolean appendReceivedMessageToQueue(byte[] message){
+    public boolean appendReceivedMessageToQueue(byte[] message) {
         // Parse the byte data into a message
 
         Message parsedMessage = new Message(message);
@@ -73,21 +79,21 @@ public class RemotePeer{
         return messageQueue.offer(parsedMessage);
     }
 
-    public Message getNextOutgoingMessage(){
+    public Message getNextOutgoingMessage() {
         return outgoingMessageQueue.poll();
     }
 
     // We'll Call this method when we start the connection
-    public void onConnect(){
+    public void onConnect() {
 
     }
 
     // If we need to do anything special if we get disconnected, we do it here
-    public void onDisconnect(){
+    public void onDisconnect() {
 
     }
 	
-	public boolean startConnection(){
+	public boolean startConnection() {
 		// connect to the remote peer and keep the connection open
 		// we want to keep a reference of the output stream
 		// we need all that running in a separate thread 
@@ -97,7 +103,7 @@ public class RemotePeer{
 		return false;
 	}
 
-	public void updateOutputStream(OutputStream out){
+	public void updateOutputStream(OutputStream out) {
 		this.out = out;
 	}
 	
