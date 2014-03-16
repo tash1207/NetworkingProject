@@ -2,6 +2,11 @@ package com.networking.project;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.ArrayList;
 import java.lang.Math;
@@ -33,6 +38,7 @@ public class Peer {
 			fileSize = Integer.parseInt(values[4]);
 			pieceSize = Integer.parseInt(values[5]);
 		}
+
     }
     
     /**
@@ -48,7 +54,7 @@ public class Peer {
 			while((st = in.readLine()) != null) {
 				String[] tokens = st.split("\\s+");
 				values[i] = tokens[1];
-				System.out.println(tokens[1]);
+				//System.out.println(tokens[1]);
 				i++;
 			}
 			in.close();
@@ -114,6 +120,32 @@ public class Peer {
 	public boolean onRemotePeerDisconnect(RemotePeer peer) {
 		return remotePeers.remove(peer);
 	}
+	
+    /**
+     * Returns an ArrayList of RemotePeers of size numPreferredNeighbors who have the largest download rates
+     * to our peer
+     * @return
+     */
+    public ArrayList<RemotePeer> selectNewPreferredNeighbors() {
+    	ArrayList<RemotePeer> preferredNeighbors = new ArrayList<RemotePeer>();
+    	Map<Integer, RemotePeer> download_rates = new TreeMap<Integer, RemotePeer>(Collections.reverseOrder());
+    	
+    	// Iterate over all remote peers and find their download rates
+    	Iterator<RemotePeer> it_peers = remotePeers.iterator();
+    	while (it_peers.hasNext()) {
+    		RemotePeer rp = it_peers.next();
+    		download_rates.put(rp.getDownloadRate(), rp);
+    	}
+    	// Iterate over our sorted map of download rates and return <numPreferredNeighbors> remote peers
+    	Iterator<Integer> it_rates = download_rates.keySet().iterator();
+    	int i = 0;
+    	while (it_rates.hasNext() && i < numPreferredNeighbors) {
+    		preferredNeighbors.add(download_rates.get(it_rates.next()));
+    		//System.out.println(preferredNeighbors.get(i).getPeerid() + ": " + preferredNeighbors.get(i).getDownloadRate());
+    		i++;
+    	}
+    	return preferredNeighbors;
+    }
 	
 	public RemotePeer getAndRemoveRandomChokedPeer() {
 		int index = (int)(Math.random() * this.chokedRemotePeers.size());
