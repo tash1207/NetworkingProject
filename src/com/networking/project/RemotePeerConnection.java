@@ -25,6 +25,7 @@ public class RemotePeerConnection implements Runnable{
 	public void run(){
 		try {
            sock = new Socket(hostname, port);
+           remotePeer.onConnect();
            
            in = sock.getInputStream();
            out = sock.getOutputStream();
@@ -32,7 +33,7 @@ public class RemotePeerConnection implements Runnable{
            remotePeer.updateOutputStream(out);
            remotePeer.updateInputStream(in);
 		} catch (Exception e) {
-			System.out.println("SOMETHING REAL BAD HAPPENED OPENING THE SCOKET" + e);
+			System.out.println("SOMETHING REAL BAD HAPPENED OPENING THE SOCKET" + e);
 		}
 	}
 }

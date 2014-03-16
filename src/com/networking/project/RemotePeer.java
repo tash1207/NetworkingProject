@@ -3,8 +3,9 @@ package com.networking.project;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.*;
 
-public class RemotePeer {
+public class RemotePeer{
 	
 	private byte[] bitfield;
 	
@@ -16,13 +17,15 @@ public class RemotePeer {
 	private InputStream in;
 	
 	private RemotePeerConnection conn;
+	
+	private ConcurrentLinkedQueue<Message> messageQueue;
+    private ConcurrentLinkedQueue<Message> outgoingMessageQueue;
 
 	public RemotePeer(String address, int port){
-		
+		//We need to create the socket here
 	}
 	
 	public RemotePeer(String address, int port, OutputStream out, InputStream in, Socket sock){
-		
 	}
 	
 	public int getPeerid() {
@@ -45,11 +48,44 @@ public class RemotePeer {
 	 * @param message
 	 * @return boolean
 	 */
-	public boolean sendMessage(byte[] message){
-		//do something with this.out
-		//returns false if output stream isn't initialized yet
+	public boolean sendMessage(Message m){
 		return false;
 	}
+
+    /**
+     * returns a download rate in Kb/s
+     * @return
+     */
+    public int getDownloadRate(){
+        return 0;
+    }
+
+    public Message getNextIncomingMessage(){
+        return messageQueue.poll();
+    }
+
+    public boolean appendReceivedMessageToQueue(byte[] message){
+        // Parse the byte data into a message
+
+        Message parsedMessage = new Message(message);
+
+        // put it into the queue
+        return messageQueue.offer(parsedMessage);
+    }
+
+    public Message getNextOutgoingMessage(){
+        return outgoingMessageQueue.poll();
+    }
+
+    // We'll Call this method when we start the connection
+    public void onConnect(){
+
+    }
+
+    // If we need to do anything special if we get disconnected, we do it here
+    public void onDisconnect(){
+
+    }
 	
 	public boolean startConnection(){
 		// connect to the remote peer and keep the connection open

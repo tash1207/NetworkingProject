@@ -1,7 +1,11 @@
 package com.networking.project;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class Peer {
-	
+
+    private ConcurrentLinkedQueue<RemotePeer> remotePeers;
+
 	public static void sendHandshake(RemotePeer peer) {
 	}
 	
@@ -48,5 +52,14 @@ public class Peer {
 		byte messageType = 7;
 		Message message = new Message(messageType, payload);
 	}
+
+    public boolean onRemotePeerConnect(RemotePeer peer){
+        return remotePeers.offer(peer);
+    }
+
+    public boolean onRemotePeerDisconnect(RemotePeer peer){
+        return remotePeers.remove(peer);
+    }
+
 
 }

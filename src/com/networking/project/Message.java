@@ -13,10 +13,12 @@ public class Message {
 	 * 
 	 */
 	byte[] messagePayload;
+
 	/**
 	 * choke, unchoke, interested, not interested, have, bitfield, request, piece
 	 */
 	byte messageType;
+
 	/**
 	 * Length of the messageType + messagePayload but not the messageLength itself
 	 */
@@ -27,7 +29,7 @@ public class Message {
 		this.messageType = messageType;
 		messageLength =  1 + messagePayload.length;
 	}
-	
+
 	public byte[] toByteArray() {
 		ByteBuffer b = ByteBuffer.allocate(messageLength + 4);
 		b.putInt(messageLength);
@@ -37,4 +39,8 @@ public class Message {
 		return b.array();
 	}
 	
+    public Message(byte[] serializedMessage) {
+        //parse the message here
+    }
+
 }

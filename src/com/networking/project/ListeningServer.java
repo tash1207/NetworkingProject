@@ -15,18 +15,18 @@ public class ListeningServer implements Runnable{
 	public static void main(String[] args) {
 		System.out.println("HEY world");
 		(new Thread(new ListeningServer())).start();
-		
 	}
 	
 	public static void attachRemotePeer(Socket sock){
 		System.out.println("Attached the remote peer");
 		try {
+			while(true){
 				OutputStream out = sock.getOutputStream();
 				InputStream in = sock.getInputStream();
 			
 				System.out.println("Data: " + in.read());
 				out.write(97);
-				sock.close();
+			}
 
 
 		} catch (IOException e) {
