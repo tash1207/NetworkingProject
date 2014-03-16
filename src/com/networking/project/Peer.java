@@ -1,14 +1,64 @@
 package com.networking.project;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.ArrayList;
 import java.lang.Math;
 
 public class Peer {
+	int numPreferredNeighbors;
+	int unchokingInterval;
+	int optimisticUnchokingInterval;
+	String fileName;
+	int fileSize;
+	int pieceSize;
 
 	private ConcurrentLinkedQueue<RemotePeer> remotePeers;
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
+
+    
+    /**
+     *  "Whenever a peer starts, it should read the file Common.cfg and set up the corresponding variables."
+     */
+    public Peer() {
+    	String[] values = readCommonConfig();
+		if (values != null) {
+			this.numPreferredNeighbors = Integer.parseInt(values[0]);
+			this.unchokingInterval = Integer.parseInt(values[1]);
+			this.optimisticUnchokingInterval = Integer.parseInt(values[2]);
+			
+			fileName = values[3];
+			fileSize = Integer.parseInt(values[4]);
+			pieceSize = Integer.parseInt(values[5]);
+		}
+    }
+    
+    /**
+     * Read the Common.cfg file and only return the values not the keys
+     * @return
+     */
+	public static String[] readCommonConfig() {
+		String st;
+		String[] values = new String[6];
+		try {
+			BufferedReader in = new BufferedReader(new FileReader("Common.cfg"));
+			int i = 0;
+			while((st = in.readLine()) != null) {
+				String[] tokens = st.split("\\s+");
+				values[i] = tokens[1];
+				System.out.println(tokens[1]);
+				i++;
+			}
+			in.close();
+			return values;
+		}
+		catch (Exception ex) {
+			System.out.println(ex.toString());
+			return null;
+		}
+	}
 
 	public static void sendHandshake(RemotePeer peer) {
 	}
