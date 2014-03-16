@@ -350,16 +350,24 @@ public class Peer {
 		// choke
 		case 0:
 			break;
+
 		// unchoke
 		case 1:
 			// should be sending back a request message
+			byte[] pieceIndex = peer.retrieveRandomInterestingPiece(bitfield);
+			if (pieceIndex != null) {
+				request(peer, pieceIndex);
+			}
 			break;
+
 		// interested
 		case 2:
 			break;
+
 		// uninterested
 		case 3:
 			break;
+
 		// have
 		case 4:
 			// should I send an interested or non interested message?
@@ -369,6 +377,7 @@ public class Peer {
 				 notInterested(peer);
 			 }
 			break;
+
 		// bitfield
 		case 5:
 			// should I send an interested or non interested message?
@@ -378,11 +387,18 @@ public class Peer {
 				 notInterested(peer);
 			 }
 			break;
+
 		// request
 		case 6:
 			break;
 		// piece 
 		case 7:
+			// piece segment is being received
+			byte[] payload = msg.getMessagePayload();
+			
+			for (int i = 0; i < bitfield.length; i++) {
+				
+			}
 			break;	
 		default:
 				break;

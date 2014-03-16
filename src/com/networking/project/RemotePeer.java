@@ -3,6 +3,8 @@ package com.networking.project;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.*;
 
@@ -47,11 +49,43 @@ public class RemotePeer implements Connectable{
 	public boolean hasInterestingPieces(byte[] peerBitfield) {
 		// Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
 		for (int i = 0; i < bitfield.length; i++) {
-			if (bitfield[i] > peerBitfield[i]) {
-				return true;
+			for (int j = 1; j != 0; j = j<<1 ) {
+				if ((bitfield[i] & j) > (peerBitfield[i] & j)) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns a bitfield that contains a 1 for a random piece that the
+	 * remote peer has but the peer does not.
+	 * 
+	 * Returns null if there are no such pieces.
+	 * @param peerBitfield
+	 * @return
+	 */
+	public byte[] retrieveRandomInterestingPiece(byte[] peerBitfield) {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		
+		// assuming each bit is one index, i.e. if there are 4 bytes, 32 possible indices
+		for (int i = 0; i < bitfield.length; i++) {
+			for (int j = 1; j != 0; j = j<<1 ) {
+				if ((bitfield[i] & j) > (peerBitfield[i] & j)) {
+					indices.add(i*8 + j);
+				}
+			}
+		}
+		
+		if (indices.isEmpty()) {
+			return null;
+		}
+		
+		ByteBuffer pieceBitfield = ByteBuffer.allocate(peerBitfield.length);
+		int pieceIndex = indices.get((int)(Math.random() * indices.size()));
+		pieceBitfield.putInt(pieceIndex);
+		return pieceBitfield.array();
 	}
 	
 	/**
