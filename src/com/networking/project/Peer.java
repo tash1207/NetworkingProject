@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.ArrayList;
-import java.lang.Math;
 
 public class Peer {
 	int numPreferredNeighbors;
@@ -38,7 +38,7 @@ public class Peer {
 			fileSize = Integer.parseInt(values[4]);
 			pieceSize = Integer.parseInt(values[5]);
 		}
-
+		// TODO instantiate remotePeers and call setTimers();
     }
     
     /**
@@ -64,6 +64,31 @@ public class Peer {
 			System.out.println(ex.toString());
 			return null;
 		}
+	}
+	
+	public void setTimers() {
+		// Set timer for selecting new preferred neighbors
+		TimerTask task_preferred = new TimerTask() {
+			
+			@Override
+			public void run() {
+				selectNewPreferredNeighbors();
+			}
+		};
+		Timer timer_preferred = new Timer();
+		timer_preferred.scheduleAtFixedRate(task_preferred, 0, unchokingInterval * 1000);
+		/*
+		// Set timer for optimistically unchoking a neighbor
+		TimerTask task_unchoke = new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO call method to optimistically unchoke
+			}
+		};
+		Timer timer_unchoke = new Timer();
+		timer_unchoke.scheduleAtFixedRate(task_unchoke, 0, optimisticUnchokingInterval * 1000);
+		*/
 	}
 
 	public static void sendHandshake(RemotePeer peer) {
@@ -124,14 +149,17 @@ public class Peer {
 	
     /**
      * Returns an ArrayList of RemotePeers of size numPreferredNeighbors who have the largest download rates
-     * to our peer
+     * to the peer and are interested in the peer
      * @return
      */
     public ArrayList<RemotePeer> selectNewPreferredNeighbors() {
+    	// TODO randomly select preferred neighbors if peer has completed downloading the file
+    	
     	ArrayList<RemotePeer> preferredNeighbors = new ArrayList<RemotePeer>();
     	Map<Integer, RemotePeer> download_rates = new TreeMap<Integer, RemotePeer>(Collections.reverseOrder());
     	
     	// Iterate over all remote peers and find their download rates
+    	// TODO check that remote peer is interested in peer
     	Iterator<RemotePeer> it_peers = remotePeers.iterator();
     	while (it_peers.hasNext()) {
     		RemotePeer rp = it_peers.next();
