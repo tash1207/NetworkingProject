@@ -53,6 +53,8 @@ public class Peer {
 		interestedRemotePeers = new HashSet<RemotePeer>();
 		chokedRemotePeers = new ArrayList<RemotePeer>();
 		unchokedRemotePeers = new ArrayList<RemotePeer>();
+
+        setTimers();
 		// TODO instantiate remotePeers and call setTimers();
     }
 
@@ -80,8 +82,25 @@ public class Peer {
 			return null;
 		}
 	}
+
+    public void readRemoteMessages(){
+        Iterator<RemotePeer> peerIterator = remotePeers.iterator();
+        RemotePeer remotePeer;
+        while (peerIterator.hasNext()){
+            remotePeer = peerIterator.next();
+            Message m = remotePeer.getNextIncomingMessage();
+
+            if (m != null){
+                System.out.println("Message from " + remotePeer.getPeerid() + ": " + Util.byteToHex(m.getMessageType()));
+                System.out.println("Payload from " + remotePeer.getPeerid() + ": " + Util.bytesToHex(m.getMessagePayload()));
+                System.out.println("--------------------------------------------------------------------------------");
+            }
+        }
+
+    }
 	
 	public void setTimers() {
+        /* TODO fix this
 		// Set timer for selecting new preferred neighbors
 		TimerTask task_preferred = new TimerTask() {
 			
@@ -103,6 +122,18 @@ public class Peer {
 		};
 		Timer timer_unchoke = new Timer();
 		timer_unchoke.scheduleAtFixedRate(task_unchoke, 0, optimisticUnchokingInterval * 1000);
+		*/
+
+        // Set timer for reading messages
+        TimerTask taskRemoteMessages = new TimerTask() {
+
+            @Override
+            public void run() {
+                readRemoteMessages();
+            }
+        };
+        Timer timerRemoteMessage = new Timer();
+        timerRemoteMessage.scheduleAtFixedRate(taskRemoteMessages, 0, 1 * 1000);
 	}
 
 	public static void sendHandshake(RemotePeer peer) {

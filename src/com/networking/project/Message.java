@@ -53,6 +53,10 @@ public class Message {
     	return this.messageType;
     }
 
+    public byte[] getMessagePayload() {
+        return this.messagePayload;
+    }
+
 	public byte[] toByteArray() {
 		ByteBuffer b = ByteBuffer.allocate(messageLength + 4);
 		b.putInt(messageLength);

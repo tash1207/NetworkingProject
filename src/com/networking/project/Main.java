@@ -43,7 +43,10 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        peer.chokeAllRemotePeers();
+        peer2.chokeAllRemotePeers();
+
+        //TODO fix this bug here, the remote peer id is one when it should be 2
+        //peer2.chokeAllRemotePeers();
 
 
 	}
