@@ -261,4 +261,62 @@ public class Peer {
 	public boolean removeInterestedRemotePeer(RemotePeer peer) {
 		return this.interestedRemotePeers.remove(peer);
 	}
+	
+	public void parseRemotePeerMessages() {
+		Iterator<RemotePeer> iter = remotePeers.iterator();
+		
+		while (iter.hasNext()) {
+			RemotePeer currentPeer = iter.next();
+			Message incomingMessage = currentPeer.getNextIncomingMessage();
+			parseAndReplyToMessage(incomingMessage);
+		}
+	}
+	
+	/**
+	 * Parses a message and responds appropriately.
+	 */
+	public void parseAndReplyToMessage(Message msg, RemotePeer peer) {
+		byte messageType = msg.getMessageType();
+		switch(messageType) {
+		// choke
+		case 0:
+			break;
+		// unchoke
+		case 1:
+			// should be sending back a request message
+			break;
+		// interested
+		case 2:
+			break;
+		// uninterested
+		case 3:
+			break;
+		// have
+		case 4:
+			// should I send an interested or non interested message?
+			 if (hasInterestingPieces(bitfield)) {
+				 interested(peer);
+			 } else {
+				 notInterested(peer);
+			 }
+			break;
+		// bitfield
+		case 5:
+			// should I send an interested or non interested message?
+			 if (hasInterestingPieces(bitfield)) {
+				 interested(peer);
+			 } else {
+				 notInterested(peer);
+			 }
+			break;
+		// request
+		case 6:
+			break;
+		// piece 
+		case 7:
+			break;	
+		default:
+				break;
+		}
+	}
 }

@@ -49,7 +49,9 @@ public class Message {
         return true;
     }
 
-
+    public byte getMessageType() {
+    	return this.messageType;
+    }
 
 	public byte[] toByteArray() {
 		ByteBuffer b = ByteBuffer.allocate(messageLength + 4);
