@@ -1,7 +1,11 @@
 package com.networking.project;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -239,14 +243,27 @@ public class Peer {
     	
     	// Log the new preferred neighbors
     	Date date = new Date();
-    	System.out.print(date.toString() + ": Peer " + peerid + " has the preferred neighbors [" );
+    	String log_text = date.toString() + ": Peer " + peerid + " has the preferred neighbors [";
     	for (int i = 0; i < preferredNeighbors.size(); i++) {
-    		System.out.print(preferredNeighbors.get(i).getPeerid());
+    		log_text = log_text + preferredNeighbors.get(i).getPeerid();
     		if (i != preferredNeighbors.size() - 1) {
-    			System.out.print(", ");
+    			log_text = log_text + ", ";
     		}
     	}
-    	System.out.println("]");
+    	log_text = log_text + "]";
+    	System.out.println(log_text);
+    	
+    	try {
+	    	File log = new File("log_peer_" + peerid + ".log");
+	    	if (!log.exists()) {
+	    		log.createNewFile();
+	    	}
+	    	PrintWriter out = new PrintWriter(new FileWriter(log, true));
+    		out.append(log_text);
+    		out.close();
+    	} catch (IOException e) {
+    		
+    	}
     	
     	return preferredNeighbors;
     }
@@ -256,9 +273,6 @@ public class Peer {
         while(peerIterator.hasNext()){
             choke(peerIterator.next());
         }
-
-
-
 
     }
 	
