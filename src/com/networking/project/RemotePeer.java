@@ -1,5 +1,9 @@
 package com.networking.project;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
 public class RemotePeer {
 	
 	private byte[] bitfield;
@@ -8,8 +12,16 @@ public class RemotePeer {
 	private String address;
 	private int port;
 	
+	private OutputStream out;
+	private InputStream in;
 	
+	private RemotePeerConnection conn;
+
 	public RemotePeer(String address, int port){
+		
+	}
+	
+	public RemotePeer(String address, int port, OutputStream out, InputStream in, Socket sock){
 		
 	}
 	
@@ -33,12 +45,28 @@ public class RemotePeer {
 	 * @param message
 	 * @return boolean
 	 */
-	public boolean sendMessage(Message message){
+	public boolean sendMessage(byte[] message){
+		//do something with this.out
+		//returns false if output stream isn't initialized yet
 		return false;
 	}
 	
 	public boolean startConnection(){
+		// connect to the remote peer and keep the connection open
+		// we want to keep a reference of the output stream
+		// we need all that running in a separate thread 
+
+		
+		RemotePeerConnection conn;
 		return false;
+	}
+
+	public void updateOutputStream(OutputStream out){
+		this.out = out;
+	}
+	
+	public void updateInputStream(InputStream in) {
+		this.in = in;
 	}
 
 }
