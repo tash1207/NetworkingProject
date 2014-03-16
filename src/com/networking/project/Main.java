@@ -1,6 +1,8 @@
 package com.networking.project;
 
-import java.io.File;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.HashMap;
 
 public class Main {
@@ -9,11 +11,25 @@ public class Main {
         HashMap<String, Integer> peerConfig = new HashMap<String, Integer>();
         HashMap<Integer, String> reversePeerConfig = new HashMap<Integer, String>();
 
-        peerConfig.put("localhost:4003",1);
-        peerConfig.put("localhost:4003",2);
+        String st;
+		try {
+			BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
+			while((st = in.readLine()) != null) {
+				String[] tokens = st.split("\\s+");
+				System.out.println(tokens[0] + " " + tokens[1] + " " + tokens[2]);
+				
+				peerConfig.put(tokens[1] + ":" + tokens[2], Integer.valueOf(tokens[0]));
+				reversePeerConfig.put(Integer.valueOf(tokens[0]), tokens[1] + ":" + tokens[2]);
+				
+				// TODO set peer bitfield with tokens[3]
+			}
+			
+			in.close();
+		}
+		catch (Exception ex) {
+			System.out.println(ex.toString());
+		}
 
-        reversePeerConfig.put(1, "localhost:4002");
-        reversePeerConfig.put(2, "localhost:4003");
 
         System.out.println("Spawning first peer");
         Peer peer = new Peer(1,4002);
