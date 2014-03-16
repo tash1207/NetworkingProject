@@ -9,7 +9,6 @@ public class RemotePeer {
 	private int port;
 	
 	
-	
 	public RemotePeer(String address, int port){
 		
 	}
@@ -34,7 +33,7 @@ public class RemotePeer {
 	 * @param message
 	 * @return boolean
 	 */
-	public boolean sendMessage(byte[] message){
+	public boolean sendMessage(Message message){
 		return false;
 	}
 	
