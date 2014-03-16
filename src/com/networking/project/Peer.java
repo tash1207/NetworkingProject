@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -204,6 +205,17 @@ public class Peer {
 	    		i++;
 	    	}
     	}
+    	
+    	// Log the new preferred neighbors
+    	Date date = new Date();
+    	System.out.print(date.toString() + ": Peer " + peerid + " has the preferred neighbors [" );
+    	for (int i = 0; i < preferredNeighbors.size(); i++) {
+    		System.out.print(preferredNeighbors.get(i).getPeerid());
+    		if (i != preferredNeighbors.size() - 1) {
+    			System.out.print(", ");
+    		}
+    	}
+    	System.out.println("]");
     	
     	return preferredNeighbors;
     }
