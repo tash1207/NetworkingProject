@@ -42,7 +42,9 @@ public class ListeningServer implements Runnable{
 			try {
 				// Continously check for new connections
 				while (true) {
+                    // TODO: log that we've accepted a connection from another peer
 					final Socket sock = server.accept();
+
 					new Thread() {
 						public void run() {
 							ListeningServer.attachRemotePeer(sock, localPeer, localPeerId);

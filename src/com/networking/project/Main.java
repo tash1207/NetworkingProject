@@ -51,6 +51,9 @@ public class Main {
 
 	}
 
+    /**
+     * Connects a given Peer to all the previous peerids
+     */
     public static void bootstrapPeer(Peer peer, int peerid,  HashMap<Integer, String> reversePeerConfig){
         int currentPeerid = peerid - 1;
 
