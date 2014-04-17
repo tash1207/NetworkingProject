@@ -59,6 +59,8 @@ public class Peer {
 		interestedRemotePeers = new HashSet<RemotePeer>();
 		chokedRemotePeers = new ArrayList<RemotePeer>();
 		unchokedRemotePeers = new ArrayList<RemotePeer>();
+		file = new byte[fileSize/pieceSize][];
+		bitfield = new byte[fileSize/pieceSize];
 
         setTimers();
 		// TODO instantiate remotePeers and call setTimers();
@@ -418,7 +420,7 @@ public class Peer {
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield, this);
+			ReesesPieces.receivePiece(msg, bitfield, this, file);
 			break;	
 		default:
 				break;

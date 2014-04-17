@@ -44,13 +44,19 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receivePiece(Message msg, byte[] bitfield, Peer peer) {
+	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, byte[][] file) {
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
 		
 		if (payload.length - 4 < 0) {
 			// invalid payload size
 			return;
+		}
+		
+		byte[] piece = new byte[payload.length-4];
+		
+		for (int i = 0; i < payload.length-4; i++) {
+			piece[i] = payload[i+4];
 		}
 		
 		int pieceIndex = (payload[0] & 0xFF) << 24 |
@@ -67,5 +73,8 @@ public class ReesesPieces {
 		// need to send out a have message to let all peers know about the
 		// newly acquired piece
 		peer.sendHaves();
+		
+		file[pieceIndex] = piece;
+		peer.setFile(file);
 	}
 }
