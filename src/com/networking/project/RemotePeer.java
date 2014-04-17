@@ -68,9 +68,10 @@ public class RemotePeer implements Connectable{
 		
 		// assuming each bit is one index, i.e. if there are 4 bytes, 32 possible indices
 		for (int i = 0; i < bitfield.length; i++) {
-			for (int j = 1; j != 0; j = j<<1 ) {
+            for (int j = 0; j < 8; j++) {
+                int mask = 1 << j;
 				if ((bitfield[i] & j) > (peerBitfield[i] & j)) {
-					indices.add(i*8 + j);
+					indices.add(i*8 + (7-j));
 				}
 			}
 		}
