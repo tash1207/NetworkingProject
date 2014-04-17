@@ -1,12 +1,9 @@
 package com.networking.project;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RemotePeer implements Connectable{
 
@@ -23,7 +20,7 @@ public class RemotePeer implements Connectable{
 
     private Queue<Connectable> connectablesToNotify;
 
-	public RemotePeer(int peerid, String hostanme, int port){
+	public RemotePeer(int peerid, String hostname, int port){
         this.peerid = peerid;
         this.hostname = hostname;
         this.port = port;
