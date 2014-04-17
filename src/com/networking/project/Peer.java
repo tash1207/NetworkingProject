@@ -27,6 +27,7 @@ public class Peer {
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
 	private HashSet<RemotePeer> interestedRemotePeers;
+	private byte[][] file;
 
     
     /**
@@ -342,6 +343,10 @@ public class Peer {
 	
 	public void setBitfield(byte[] newBitfield) {
 		bitfield = newBitfield;
+	}
+	
+	public void setFile(byte[][] newFile) {
+		file = newFile;
 	}
 	
 	/**

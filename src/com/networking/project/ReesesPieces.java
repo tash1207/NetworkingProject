@@ -6,11 +6,11 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receiveUnchoke(Message msg, RemotePeer peer, byte[] bitfield) {
+	public static void receiveUnchoke(Message msg, RemotePeer peer, byte[] bitfield, Peer obj) {
 		// should be sending back a request message
-		byte[] pieceIndex = peer.retrieveRandomInterestingPiece(bitfield);
+		byte[] pieceIndex = obj.retrieveRandomInterestingPiece(bitfield);
 		if (pieceIndex != null) {
-		    Peer.request(peer, pieceIndex);
+		    obj.request(peer, pieceIndex);
 		}
 	}
 	
@@ -22,12 +22,12 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receiveHave(RemotePeer peer, byte[] bitfield) {
+	public static void receiveHave(RemotePeer peer, byte[] bitfield, Peer obj) {
 		// should I send an interested or non interested message?
-		if (peer.hasInterestingPieces(bitfield)) {
-		    Peer.interested(peer);
+		if (obj.hasInterestingPieces(bitfield)) {
+		    obj.interested(peer);
 	    } else {
-			Peer.notInterested(peer);
+			obj.notInterested(peer);
 		}
 	}
 	
