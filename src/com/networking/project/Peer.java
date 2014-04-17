@@ -349,56 +349,41 @@ public class Peer {
 		switch(messageType) {
 		// choke
 		case 0:
+			ReesesPieces.receivedChoke();
 			break;
 
 		// unchoke
 		case 1:
-			// should be sending back a request message
-			byte[] pieceIndex = peer.retrieveRandomInterestingPiece(bitfield);
-			if (pieceIndex != null) {
-				request(peer, pieceIndex);
-			}
+			ReesesPieces.receiveUnchoke(msg, peer, bitfield);
 			break;
 
 		// interested
 		case 2:
+			ReesesPieces.receivedInterested();
 			break;
 
 		// uninterested
 		case 3:
+			ReesesPieces.receivedNotInterested();
 			break;
 
 		// have
 		case 4:
-			// should I send an interested or non interested message?
-			 if (peer.hasInterestingPieces(bitfield)) {
-				 interested(peer);
-			 } else {
-				 notInterested(peer);
-			 }
+			ReesesPieces.receiveHave(peer, bitfield);
 			break;
 
 		// bitfield
 		case 5:
-			// should I send an interested or non interested message?
-			 if (peer.hasInterestingPieces(bitfield)) {
-				 interested(peer);
-			 } else {
-				 notInterested(peer);
-			 }
+			ReesesPieces.receiveBitfield(peer, bitfield);
 			break;
 
 		// request
 		case 6:
+			ReesesPieces.receiveRequest();
 			break;
 		// piece 
 		case 7:
-			// piece segment is being received
-			byte[] payload = msg.getMessagePayload();
-			
-			for (int i = 0; i < bitfield.length; i++) {
-				
-			}
+			ReesesPieces.receivePiece(msg, bitfield);
 			break;	
 		default:
 				break;
