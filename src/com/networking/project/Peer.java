@@ -362,7 +362,7 @@ public class Peer {
 
 		// unchoke
 		case 1:
-			ReesesPieces.receiveUnchoke(msg, peer, bitfield);
+			ReesesPieces.receiveUnchoke(msg, peer, bitfield, this);
 			break;
 
 		// interested
@@ -377,12 +377,12 @@ public class Peer {
 
 		// have
 		case 4:
-			ReesesPieces.receiveHave(peer, bitfield);
+			ReesesPieces.receiveHave(peer, bitfield, this);
 			break;
 
 		// bitfield
 		case 5:
-			ReesesPieces.receiveBitfield(peer, bitfield);
+			ReesesPieces.receiveBitfield(peer, bitfield, this);
 			break;
 
 		// request
