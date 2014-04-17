@@ -57,6 +57,10 @@ public class Peer {
 		// TODO instantiate remotePeers and call setTimers();
     }
 
+    public byte[] getBitfield (){
+        return bitfield;
+    }
+
     /**
      * Read the Common.cfg file and only return the values not the keys
      * @return
@@ -191,6 +195,16 @@ public class Peer {
 	public boolean onRemotePeerDisconnect(RemotePeer peer) {
 		return remotePeers.remove(peer);
 	}
+
+    public boolean hasRequested(int pieceIndex){
+
+    }
+
+    public boolean markRequested(int pieceIndex){
+
+        return true;
+
+    }
 
 
     /**

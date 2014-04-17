@@ -63,7 +63,7 @@ public class RemotePeer implements Connectable{
 	 * @param peerBitfield
 	 * @return
 	 */
-	public byte[] retrieveRandomInterestingPiece(byte[] peerBitfield) {
+	public ArrayList<Integer> retrieveInterestingPieces(byte[] peerBitfield) {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
 		// assuming each bit is one index, i.e. if there are 4 bytes, 32 possible indices
@@ -79,11 +79,11 @@ public class RemotePeer implements Connectable{
 		if (indices.isEmpty()) {
 			return null;
 		}
-		
-		ByteBuffer pieceBitfield = ByteBuffer.allocate(peerBitfield.length);
-		int pieceIndex = indices.get((int)(Math.random() * indices.size()));
-		pieceBitfield.putInt(pieceIndex);
-		return pieceBitfield.array();
+
+        return indices;
+
+		//ByteBuffer pieceBitfield = ByteBuffer.allocate(peerBitfield.length);
+		//int pieceIndex = indices.get((int)(Math.random() * indices.size()));
 	}
 	
 	/**
