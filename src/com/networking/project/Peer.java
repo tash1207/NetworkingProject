@@ -157,6 +157,7 @@ public class Peer {
 		Message message = new Message(messageType, messagePayload);
         peer.sendMessage(message);
         Log.logChoking(peerid, peer.getPeerid());
+        peer.sendMessage(message);
 	}
 
 	public void unchoke(RemotePeer peer) {
@@ -164,6 +165,7 @@ public class Peer {
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
 		Log.logUnchoking(peerid, peer.getPeerid());
+        peer.sendMessage(message);
 	}
 
 	public void interested(RemotePeer peer) {
@@ -171,6 +173,7 @@ public class Peer {
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
 		Log.logInterested(peerid, peer.getPeerid());
+        peer.sendMessage(message);
 	}
 
 	public void notInterested(RemotePeer peer) {
@@ -178,6 +181,7 @@ public class Peer {
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
 		Log.logNotInterested(peerid, peer.getPeerid());
+        peer.sendMessage(message);
 	}
 
 	public void have(RemotePeer peer, byte[] pieceIndex) {
@@ -186,11 +190,13 @@ public class Peer {
 		int piece_index = (pieceIndex[0] & 0xFF) << 24 | (pieceIndex[1] & 0xFF) << 16 |
 			     (pieceIndex[2] & 0xFF) << 8 | (pieceIndex[3] & 0xFF);
 		Log.logHave(peerid, peer.getPeerid(), piece_index);
+        peer.sendMessage(message);
 	}
 
 	public void bitfield(RemotePeer peer, byte[] bitfield) {
 		byte messageType = 5;
 		Message message = new Message(messageType, bitfield);
+        peer.sendMessage(message);
 	}
 
 	public void request(RemotePeer peer, int pieceIndex) {
@@ -198,11 +204,14 @@ public class Peer {
         byte[] pieceIndexBuffer = ByteBuffer.allocate(4).putInt(1695609641).array();
 
         Message message = new Message(messageType, pieceIndexBuffer);
+
+        peer.sendMessage(message);
 	}
 
 	public void piece(RemotePeer peer, byte[] payload) {
 		byte messageType = 7;
 		Message message = new Message(messageType, payload);
+        peer.sendMessage(message);
 	}
 
     public boolean onRemotePeerConnect(RemotePeer peer){
