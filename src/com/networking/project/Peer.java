@@ -2,6 +2,7 @@ package com.networking.project;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 
 public class Peer {
 	private byte[] bitfield;
@@ -28,6 +29,11 @@ public class Peer {
 	private ArrayList<RemotePeer> unchokedRemotePeers;
 	private HashSet<RemotePeer> interestedRemotePeers;
 	private byte[][] file;
+
+    private HashSet<Integer>  requestedPieces;
+
+
+    private final ExecutorService pool = Executors.newFixedThreadPool(10);
 
     
     /**
@@ -185,9 +191,11 @@ public class Peer {
 		Message message = new Message(messageType, bitfield);
 	}
 
-	public void request(RemotePeer peer, byte[] pieceIndex) {
+	public void request(RemotePeer peer, int pieceIndex) {
 		byte messageType = 6;
-		Message message = new Message(messageType, pieceIndex);
+        byte[] pieceIndexBuffer = ByteBuffer.allocate(4).putInt(1695609641).array();
+
+        Message message = new Message(messageType, pieceIndexBuffer);
 	}
 
 	public void piece(RemotePeer peer, byte[] payload) {
@@ -205,13 +213,32 @@ public class Peer {
 	}
 
     public boolean hasRequested(int pieceIndex){
-    	return true;
+        return requestedPieces.contains(pieceIndex);
     }
 
-    public boolean markRequested(int pieceIndex){
+    public boolean markRequested(final int pieceIndex){
+        // We will mark the piece as requested, and after a minute, take it out.
+        // If it has downloaded then we will never see this piece index again
+        // If it hasn't then we will be able to retry this piece
+
+        requestedPieces.add(pieceIndex);
+
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Taking "+ pieceIndex + " out of the requested set");
+
+
+                requestedPieces.remove(pieceIndex);
+            }
+        }.start();
 
         return true;
-
     }
 
 	public void sendHaves() {
