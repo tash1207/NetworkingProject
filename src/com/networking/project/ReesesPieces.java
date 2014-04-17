@@ -44,12 +44,28 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receivePiece(Message msg, byte[] bitfield) {
+	public static void receivePiece(Message msg, byte[] bitfield, Peer obj) {
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
-					
-		for (int i = 0; i < bitfield.length; i++) {
-						
+		
+		if (payload.length - 4 < 0) {
+			// invalid payload size
+			return;
 		}
+		
+		int pieceIndex = (payload[0] & 0xFF) << 24 |
+				     (payload[1] & 0xFF) << 16 |
+				     (payload[2] & 0xFF) << 8 |
+				     (payload[3] & 0xFF);
+
+		int mask = 1;
+		mask = mask << (7 - (pieceIndex % 8));
+
+		bitfield[pieceIndex / 8] |= mask;
+		obj.setBitfield(bitfield);
+		
+		// need to send out a have message to let all peers know about the
+		// newly acquired piece
+		obj.sendHaves();
 	}
 }

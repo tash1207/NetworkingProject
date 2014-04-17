@@ -206,6 +206,11 @@ public class Peer {
 
     }
 
+	public void sendHaves() {
+		for (RemotePeer peer : remotePeers) {
+			have(peer, bitfield);
+		}
+	}
 
     /**
      * Returns an ArrayList of RemotePeers of size numPreferredNeighbors who have the largest download rates
@@ -328,6 +333,10 @@ public class Peer {
 		}
 	}
 	
+	public void setBitfield(byte[] newBitfield) {
+		bitfield = newBitfield;
+	}
+	
 	/**
 	 * Parses a message and responds appropriately.
 	 */
@@ -370,7 +379,7 @@ public class Peer {
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield);
+			ReesesPieces.receivePiece(msg, bitfield, this);
 			break;	
 		default:
 				break;

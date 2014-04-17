@@ -66,7 +66,6 @@ public class Message {
 		return b.array();
 	}
 
-
     public Message(byte[] serializedMessage) {
     	try {
     		//parse the message here
