@@ -6,11 +6,11 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receiveUnchoke(Message msg, RemotePeer peer, byte[] bitfield, Peer obj) {
+	public static void receiveUnchoke(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		// should be sending back a request message
-		byte[] pieceIndex = peer.retrieveRandomInterestingPiece(bitfield);
+		byte[] pieceIndex = remotePeer.retrieveRandomInterestingPiece(bitfield);
 		if (pieceIndex != null) {
-		    obj.request(peer, pieceIndex);
+		    peer.request(remotePeer, pieceIndex);
 		}
 	}
 	
@@ -22,21 +22,21 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receiveHave(RemotePeer peer, byte[] bitfield, Peer obj) {
+	public static void receiveHave(RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		// should I send an interested or non interested message?
-		if (peer.hasInterestingPieces(bitfield)) {
-		    obj.interested(peer);
+		if (remotePeer.hasInterestingPieces(bitfield)) {
+		    peer.interested(remotePeer);
 	    } else {
-			obj.notInterested(peer);
+			peer.notInterested(remotePeer);
 		}
 	}
 	
-	public static void receiveBitfield(RemotePeer peer, byte[] bitfield, Peer obj) {
+	public static void receiveBitfield(RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		// should I send an interested or non interested message?
-		if (peer.hasInterestingPieces(bitfield)) {
-			obj.interested(peer);
+		if (remotePeer.hasInterestingPieces(bitfield)) {
+			peer.interested(remotePeer);
 		} else {
-			obj.notInterested(peer);
+			peer.notInterested(remotePeer);
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class ReesesPieces {
 		
 	}
 	
-	public static void receivePiece(Message msg, byte[] bitfield, Peer obj) {
+	public static void receivePiece(Message msg, byte[] bitfield, Peer peer) {
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
 		
@@ -62,10 +62,10 @@ public class ReesesPieces {
 		mask = mask << (7 - (pieceIndex % 8));
 
 		bitfield[pieceIndex / 8] |= mask;
-		obj.setBitfield(bitfield);
+		peer.setBitfield(bitfield);
 		
 		// need to send out a have message to let all peers know about the
 		// newly acquired piece
-		obj.sendHaves();
+		peer.sendHaves();
 	}
 }
