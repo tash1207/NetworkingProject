@@ -14,7 +14,7 @@ public class PeerDoes {
         for (int i = 0; i < indices.size(); i++ ){
             int index = indices.get(i);
             if (!localPeer.hasRequested(index)){
-                localPeer.markRequsted(index);
+                localPeer.markRequested(index);
             }
 
         }

@@ -139,50 +139,57 @@ public class Peer {
         timerRemoteMessage.scheduleAtFixedRate(taskRemoteMessages, 0, 1 * 1000);
 	}
 
-	public static void sendHandshake(RemotePeer peer) {
+	public void sendHandshake(RemotePeer peer) {
 	}
 
-	public static void choke(RemotePeer peer) {
+	public void choke(RemotePeer peer) {
 		byte messageType = 0;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
         peer.sendMessage(message);
+        Log.logChoking(peerid, peer.getPeerid());
 	}
 
-	public static void unchoke(RemotePeer peer) {
+	public void unchoke(RemotePeer peer) {
 		byte messageType = 1;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
+		Log.logUnchoking(peerid, peer.getPeerid());
 	}
 
-	public static void interested(RemotePeer peer) {
+	public void interested(RemotePeer peer) {
 		byte messageType = 2;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
+		Log.logInterested(peerid, peer.getPeerid());
 	}
 
-	public static void notInterested(RemotePeer peer) {
+	public void notInterested(RemotePeer peer) {
 		byte messageType = 3;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
+		Log.logNotInterested(peerid, peer.getPeerid());
 	}
 
-	public static void have(RemotePeer peer, byte[] pieceIndex) {
+	public void have(RemotePeer peer, byte[] pieceIndex) {
 		byte messageType = 4;
 		Message message = new Message(messageType, pieceIndex);
+		int piece_index = (pieceIndex[0] & 0xFF) << 24 | (pieceIndex[1] & 0xFF) << 16 |
+			     (pieceIndex[2] & 0xFF) << 8 | (pieceIndex[3] & 0xFF);
+		Log.logHave(peerid, peer.getPeerid(), piece_index);
 	}
 
-	public static void bitfield(RemotePeer peer, byte[] bitfield) {
+	public void bitfield(RemotePeer peer, byte[] bitfield) {
 		byte messageType = 5;
 		Message message = new Message(messageType, bitfield);
 	}
 
-	public static void request(RemotePeer peer, byte[] pieceIndex) {
+	public void request(RemotePeer peer, byte[] pieceIndex) {
 		byte messageType = 6;
 		Message message = new Message(messageType, pieceIndex);
 	}
 
-	public static void piece(RemotePeer peer, byte[] payload) {
+	public void piece(RemotePeer peer, byte[] payload) {
 		byte messageType = 7;
 		Message message = new Message(messageType, payload);
 	}
@@ -197,7 +204,7 @@ public class Peer {
 	}
 
     public boolean hasRequested(int pieceIndex){
-
+    	return true;
     }
 
     public boolean markRequested(int pieceIndex){
