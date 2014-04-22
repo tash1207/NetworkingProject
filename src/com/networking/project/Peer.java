@@ -25,7 +25,7 @@ public class Peer {
 	int fileSize;
 	int pieceSize;
 
-    private int peerid;
+    private int peerid, numberOfFilePieces;
     private ConcurrentLinkedQueue<RemotePeer> remotePeers;
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
@@ -65,6 +65,9 @@ public class Peer {
 		file = new byte[fileSize/pieceSize][];
 		bitfield = new byte[fileSize/pieceSize];
 		preferredRemotePeers = new ArrayList<RemotePeer>();
+		
+		// TODO: set this to the number of partial file pieces saved to disk
+		numberOfFilePieces = 0;
 
         setTimers();
     }
@@ -75,6 +78,14 @@ public class Peer {
     
     public int getPeerid() {
     	return peerid;
+    }
+    
+    public int getNumberOfFilePieces() {
+    	return numberOfFilePieces;
+    }
+    
+    public void incrementNumberOfFilePieces() {
+    	numberOfFilePieces += 1;
     }
 
     /**
@@ -412,11 +423,13 @@ public class Peer {
 
 		// interested
 		case 2:
+			Log.logInterested(peerid, peer.getPeerid());
 			this.addInterestedRemotePeer(peer);
 			break;
 
 		// uninterested
 		case 3:
+			Log.logNotInterested(peerid, peer.getPeerid());
 			this.removeInterestedRemotePeer(peer);
 			break;
 
@@ -436,7 +449,7 @@ public class Peer {
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield, this, file);
+			ReesesPieces.receivePiece(msg, bitfield, this, peer, file);
 			break;	
 		default:
 				break;

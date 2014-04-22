@@ -69,7 +69,7 @@ public class ReesesPieces {
 		peer.piece(remotePeer, messagePayload);
 	}
 	
-	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, byte[][] file) {
+	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer, byte[][] file) {
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
 		
@@ -96,9 +96,11 @@ public class ReesesPieces {
 		// newly acquired piece
 		peer.sendHaves(Util.intToByte(pieceIndex));
 		
+		// TODO: write new partial file to disk
+		
 		file[pieceIndex] = piece;
 		peer.setFile(file);
-		
-		// TODO: write new partial file to disk
+		peer.incrementNumberOfFilePieces();
+		Log.logDownloadedPiece(peer.getPeerid(), remotePeer.getPeerid(), pieceIndex, peer.getNumberOfFilePieces());
 	}
 }
