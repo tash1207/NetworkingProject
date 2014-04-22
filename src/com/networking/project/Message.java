@@ -35,23 +35,21 @@ public class Message {
 
         byte[] hello = ("HELLO").getBytes();
         ByteBuffer zeros = ByteBuffer.allocate(23);
-        ByteBuffer peer = ByteBuffer.allocate(4);
-        peer.putInt(peerid);
 
         message.put(hello);
-        message.put(zeros);
-        message.put(peer);
+        message.put(zeros.array());
+        message.putInt(peerid);
 
         return message.array();
     }
 
     public static int parseHandshake(byte[] handshake){
-    	ByteBuffer message = ByteBuffer.allocate(32);
+    	ByteBuffer message = ByteBuffer.allocate(28);
         byte[] hello = ("HELLO").getBytes();
         ByteBuffer zeros = ByteBuffer.allocate(23);
 
         message.put(hello);
-        message.put(zeros);
+        message.put(zeros.array());
         
         byte[] messageBytes = message.array();
         

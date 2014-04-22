@@ -16,9 +16,11 @@ public class RemotePeerConnection implements Runnable{
 	private InputStream in;
 	
 	private Socket sock;
+
+    private int remotePeerId;
 	
 
-	public RemotePeerConnection(int peerid, String hostname, int port){
+	public RemotePeerConnection(String hostname, int port, int localPeerId){
 		this.remotePeer = remotePeer;
 		this.hostname = hostname;
 		this.port = port;
@@ -26,30 +28,30 @@ public class RemotePeerConnection implements Runnable{
         try {
             sock = new Socket(hostname, port);
 
-            this.checkHandshake(sock, peerid);
+            this.checkHandshake(sock, localPeerId);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public RemotePeerConnection(int peerid, Socket sock){
-        this.checkHandshake(sock, peerid);
+    public RemotePeerConnection(Socket sock, int localPeerId){
+        this.checkHandshake(sock, localPeerId);
     }
 
-    public void checkHandshake(Socket sock, int peerid){
+
+    public int getRemotePeerId(){
+        return remotePeerId;
+    }
+
+    public void checkHandshake(Socket sock, int localPeerId){
         // TODO: log handshake
 
         try {
             in = sock.getInputStream();
             out = sock.getOutputStream();
 
-            if ( sendHandShake(out, in, peerid) ) {
-                //remotePeer.onConnect();
-                //System.out.println("Sucessful connection! from "+ peerid);
-            }else{
-                System.err.println("Error in establishing handshake");
-            }
+            this.remotePeerId = sendHandShake(out, in, localPeerId);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,8 +103,9 @@ public class RemotePeerConnection implements Runnable{
         }
     }
 
-    public static boolean sendHandShake(OutputStream os, InputStream is, int peerid){
-        byte[] message = Message.createHandshake(peerid);
+    public static int sendHandShake(OutputStream os, InputStream is, int localPeerId){
+        byte[] message = Message.createHandshake(localPeerId);
+        int remotePeerId = -1;
         try {
             os.write(message);
 
@@ -110,17 +113,15 @@ public class RemotePeerConnection implements Runnable{
 
             byte[] handshakeReply = new byte[32];
             is.read(handshakeReply);
-            if (Message.checkHandshake(handshakeReply)){
-                // Success!
-                return true;
-            }else{
-                return false;
-            }
+            remotePeerId = (Message.parseHandshake(handshakeReply));
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+
+        return remotePeerId;
     }
 	
 	public void run(){

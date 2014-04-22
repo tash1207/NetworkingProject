@@ -212,8 +212,8 @@ public class Log {
 		logConnectedFrom(2, 1);
 
 		ArrayList<RemotePeer> peers = new ArrayList<RemotePeer>();
-		peers.add(new RemotePeer(2, "hostname", 8080));
-		peers.add(new RemotePeer(3, "tashawych", 8080));
+		//peers.add(new RemotePeer(2, "hostname", 8080));
+		//peers.add(new RemotePeer(3, "tashawych", 8080));
 
 		logPreferredNeighbors(1, peers);
 		logOptimisticallyUnchokedNeighbor(1, 3);

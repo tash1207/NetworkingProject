@@ -22,8 +22,14 @@ public class ListeningServer implements Runnable{
         String hostname = sock.getInetAddress().getHostName();
         int port = sock.getPort();
 
-        RemotePeerConnection conn = new RemotePeerConnection(localPeerId, sock);
-        RemotePeer remotePeer = new RemotePeer(localPeerId, conn);
+        RemotePeerConnection conn = new RemotePeerConnection(sock, localPeerId);
+
+        // after the handshake we have the remote peer id
+        int remotePeerId = conn.getRemotePeerId();
+
+        RemotePeer remotePeer = new RemotePeer(remotePeerId, conn);
+
+        Log.logConnectedFrom(localPeerId, remotePeerId);
 
         conn.saveRemotePeerRef(remotePeer);
         (new Thread(conn)).start();

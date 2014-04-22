@@ -12,6 +12,7 @@ public class RemotePeer implements Connectable{
 	private byte[] bitfield;
 	
 	private int peerid;
+    private int localPeerId;
 	private String hostname;
 	private int port;
 	
@@ -25,14 +26,16 @@ public class RemotePeer implements Connectable{
 
     private Queue<Connectable> connectablesToNotify;
 
-	public RemotePeer(int peerid, String hostname, int port){
-        this.peerid = peerid;
+	public RemotePeer(int localPeerId, int remotePeerid, String hostname, int port){
+        this.peerid = remotePeerid;
+        this.localPeerId = localPeerId;
+
         this.hostname = hostname;
         this.port = port;
 	}
 	
-	public RemotePeer(int peerid, RemotePeerConnection remotePeerConn){
-        this.peerid = peerid;
+	public RemotePeer(int remotePeerId, RemotePeerConnection remotePeerConn){
+        this.peerid = remotePeerId;
         conn = remotePeerConn;
 
 	}
@@ -59,6 +62,10 @@ public class RemotePeer implements Connectable{
 		}
 		return false;
 	}
+
+    public void setPeerid(int peerid){
+        this.peerid = peerid;
+    }
 
     public boolean amIChoked(){
         return isChoked;
@@ -175,7 +182,7 @@ public class RemotePeer implements Connectable{
 		// we need all that running in a separate thread 
 
 		
-		conn = new RemotePeerConnection(peerid, hostname, port);
+		conn = new RemotePeerConnection(hostname, port, localPeerId);
         conn.saveRemotePeerRef(this);
         (new Thread(conn)).start();
 
