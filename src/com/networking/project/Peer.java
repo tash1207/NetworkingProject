@@ -72,6 +72,10 @@ public class Peer {
     public byte[] getBitfield (){
         return bitfield;
     }
+    
+    public int getPeerid() {
+    	return peerid;
+    }
 
     /**
      * Read the Common.cfg file and only return the values not the keys
@@ -254,9 +258,9 @@ public class Peer {
         return true;
     }
 
-	public void sendHaves() {
+	public void sendHaves(byte[] pieceIndex) {
 		for (RemotePeer peer : remotePeers) {
-			have(peer, bitfield);
+			have(peer, pieceIndex);
 		}
 	}
 
@@ -407,17 +411,17 @@ public class Peer {
 
 		// interested
 		case 2:
-			ReesesPieces.receivedInterested();
+			this.addInterestedRemotePeer(peer);
 			break;
 
 		// uninterested
 		case 3:
-			ReesesPieces.receivedNotInterested();
+			this.removeInterestedRemotePeer(peer);
 			break;
 
 		// have
 		case 4:
-			ReesesPieces.receiveHave(peer, bitfield, this);
+			ReesesPieces.receiveHave(msg, peer, bitfield, this);
 			break;
 
 		// bitfield
@@ -427,7 +431,7 @@ public class Peer {
 
 		// request
 		case 6:
-			ReesesPieces.receiveRequest();
+			ReesesPieces.receiveRequest(msg, bitfield, this, peer, pieceSize, file);
 			break;
 		// piece 
 		case 7:

@@ -11,15 +11,9 @@ public class ReesesPieces {
         remotePeer.setUnchoked();
 	}
 	
-	public static void receivedInterested() {
+	public static void receiveHave(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
+		Log.logHave(peer.getPeerid(), remotePeer.getPeerid(), Util.byteToInt(msg.getMessagePayload()));
 		
-	}
-	
-	public static void receivedNotInterested() {
-		
-	}
-	
-	public static void receiveHave(RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		// should I send an interested or non interested message?
 		if (remotePeer.hasInterestingPieces(bitfield)) {
 		    peer.interested(remotePeer);
@@ -37,8 +31,42 @@ public class ReesesPieces {
 		}
 	}
 	
-	public static void receiveRequest() {
+	public static void receiveRequest(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer,
+			int pieceSize, byte[][] file) {
 		
+		// TODO: check preferredNeighbors to see if remotePeer is in the list before sending the message
+		
+		// piece segment is being received
+		byte[] payload = msg.getMessagePayload();
+
+        if (payload.length - 4 < 0) {
+			// invalid payload size
+			return;
+		}
+		
+		int pieceIndex = Util.byteToInt(payload);
+		
+		// check to make sure we have the piece being requested
+		int mask = 1;
+		mask = mask << (7 - (pieceIndex % 8));
+
+		if ((bitfield[pieceIndex / 8] & mask) == 0) {
+			// we do not have the piece
+			return;
+		}
+		
+		byte[] messagePayload = new byte[4 + pieceSize];
+		
+		for (int i = 0; i < 4; i++) {
+			// index of file goes in first
+			messagePayload[i] = payload[i];
+		}
+		for (int i = 0; i < pieceSize; i++) {
+			messagePayload[i+4] = file[pieceIndex][i];
+		}
+		
+		// send the piece to the remote peer
+		peer.piece(remotePeer, messagePayload);
 	}
 	
 	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, byte[][] file) {
@@ -56,10 +84,7 @@ public class ReesesPieces {
 			piece[i] = payload[i+4];
 		}
 		
-		int pieceIndex = (payload[0] & 0xFF) << 24 |
-				     (payload[1] & 0xFF) << 16 |
-				     (payload[2] & 0xFF) << 8 |
-				     (payload[3] & 0xFF);
+		int pieceIndex = Util.byteToInt(payload);
 
 		int mask = 1;
 		mask = mask << (7 - (pieceIndex % 8));
@@ -69,9 +94,11 @@ public class ReesesPieces {
 		
 		// need to send out a have message to let all peers know about the
 		// newly acquired piece
-		peer.sendHaves();
+		peer.sendHaves(Util.intToByte(pieceIndex));
 		
 		file[pieceIndex] = piece;
 		peer.setFile(file);
+		
+		// TODO: write new partial file to disk
 	}
 }
