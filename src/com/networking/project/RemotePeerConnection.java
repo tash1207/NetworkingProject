@@ -46,7 +46,7 @@ public class RemotePeerConnection implements Runnable{
 
             if ( sendHandShake(out, in, peerid) ) {
                 //remotePeer.onConnect();
-                System.out.println("Sucessful connection! from "+ peerid);
+                //System.out.println("Sucessful connection! from "+ peerid);
             }else{
                 System.err.println("Error in establishing handshake");
             }

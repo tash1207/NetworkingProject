@@ -36,6 +36,12 @@ public class PeerDoes {
         localPeer.request(remotePeer, randPieceIndex);
     }
 
+    public static void sendBitfield(Peer localPeer, RemotePeer remotePeer){
+        byte [] bitfield = localPeer.getBitfield();
+
+        localPeer.bitfield(remotePeer, bitfield);
+    }
+
 
 	/**
 	 * Called after Peer selectNewPreferredNeighbors() Does the appropriate
