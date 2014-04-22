@@ -123,10 +123,14 @@ public class RemotePeer implements Connectable{
         return false;
     }
     
-    public void updateBitfieldWithHave(byte[] have) {
-    	for (int i = 0; i < have.length; i++) {
-    		bitfield[i] |= have[i];
-    	}
+    public void updateBitfieldWithHave(int pieceIndex) {
+    	int mask = 1;
+		mask = mask << (7 - (pieceIndex % 8));
+
+		if ((bitfield[pieceIndex / 8] & mask) == 0) {
+			// we do not have the piece
+			return;
+		}
     }
 
 	/**
