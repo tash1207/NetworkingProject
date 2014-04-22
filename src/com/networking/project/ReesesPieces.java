@@ -61,6 +61,9 @@ public class ReesesPieces {
 	}
 	
 	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer, byte[][] file) {
+        //clear the ongoing request from the remote peer
+        remotePeer.clearOngoingRequest();
+
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
 		
@@ -82,11 +85,11 @@ public class ReesesPieces {
 
 		bitfield[pieceIndex / 8] |= mask;
 		peer.setBitfield(bitfield);
-		
+
 		// need to send out a have message to let all peers know about the
 		// newly acquired piece
 		peer.sendHaves(Util.intToByte(pieceIndex));
-		
+
 		// TODO: write new partial file to disk
 		
 		file[pieceIndex] = piece;
