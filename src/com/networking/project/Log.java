@@ -1,6 +1,8 @@
 package com.networking.project;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -164,6 +166,44 @@ public class Log {
 			out.close();
 		} catch (IOException e) {
 
+		}
+	}
+	
+	public static void writePartialFilePiece(int peerid, int pieceIndex, byte[] filePiece) {
+		try {
+			File partial = new File(".peer_" + peerid + "_" + pieceIndex);
+			BufferedOutputStream bos = null;
+
+			//create an object of FileOutputStream
+			FileOutputStream fos = new FileOutputStream(partial);
+
+			//create an object of BufferedOutputStream
+			bos = new BufferedOutputStream(fos);
+			bos.write(filePiece);
+			bos.close();
+			fos.close();
+		} catch (IOException e) {
+
+		}
+	}
+	
+	public static void writeCompleteFile(String fileName, byte[][] file) {
+		try {
+			File completeFile = new File(fileName);
+			BufferedOutputStream bos = null;
+
+			//create an object of FileOutputStream
+			FileOutputStream fos = new FileOutputStream(completeFile);
+			
+			bos = new BufferedOutputStream(fos);
+			
+			for (int i = 0; i < file.length; i++) {
+				bos.write(file[i]);
+			}
+			bos.close();
+			fos.close();
+		} catch (IOException e) {
+			
 		}
 	}
 

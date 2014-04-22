@@ -23,9 +23,12 @@ public class ReesesPieces {
 	}
 	
 	public static void receiveRequest(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer,
-			int pieceSize, byte[][] file) {
+			int pieceSize, byte[][] file, int remotePeerIndex) {
 		
-		// TODO: check preferredNeighbors to see if remotePeer is in the list before sending the message
+		// check preferredNeighbors to see if remotePeer is in the list before sending the message
+		if (remotePeerIndex == -1) {
+			return;
+		}
 		
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
@@ -60,10 +63,11 @@ public class ReesesPieces {
 		peer.piece(remotePeer, messagePayload);
 	}
 	
-	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer, byte[][] file) {
-        //clear the ongoing request from the remote peer
-        remotePeer.clearOngoingRequest();
 
+	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer,
+			byte[][] file, String fileName) {
+		remotePeer.clearOngoingRequest();
+	
 		// piece segment is being received
 		byte[] payload = msg.getMessagePayload();
 		
@@ -89,8 +93,8 @@ public class ReesesPieces {
 		// need to send out a have message to let all peers know about the
 		// newly acquired piece
 		peer.sendHaves(Util.intToByte(pieceIndex));
-
-		// TODO: write new partial file to disk
+		
+		Log.writePartialFilePiece(peer.getPeerid(), pieceIndex, piece);
 		
 		file[pieceIndex] = piece;
 		peer.setFile(file);
@@ -99,6 +103,7 @@ public class ReesesPieces {
 		
 		if (peer.isFileFinishedDownloading()) {
 			Log.logCompletionOfDownload(peer.getPeerid());
+			Log.writeCompleteFile(fileName, file);
 		}
 	}
 }

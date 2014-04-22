@@ -454,11 +454,12 @@ public class Peer {
 
 		// request
 		case 6:
-			ReesesPieces.receiveRequest(msg, bitfield, this, remotePeer, pieceSize, file);
+			ReesesPieces.receiveRequest(msg, bitfield, this, remotePeer, pieceSize, file,
+					preferredRemotePeers.indexOf(remotePeer));
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield, this, remotePeer, file);
+			ReesesPieces.receivePiece(msg, bitfield, this, remotePeer, file, fileName);
 			break;	
 		default:
 				break;
