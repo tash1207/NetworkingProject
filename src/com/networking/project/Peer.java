@@ -1,7 +1,10 @@
 package com.networking.project;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +81,19 @@ public class Peer {
             for (int i=0; i<bitfield.length; i++ ) {
 				bitfield[i] = (byte) 0xff;
 			}
+            byte[] bytes = new byte[pieceSize];
+            try {
+            	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("path_" + peerid + "/" + fileName));
+            	for (int i = 0; i < fileSize / pieceSize; i++) {
+            		buf.read(bytes, 0, pieceSize);
+            		file[i] = bytes;
+            	}
+            	buf.close();
+            } catch (IOException e) {
+            	
+            }
+            
+            
 		}
 
         setTimers();
