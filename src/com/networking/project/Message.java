@@ -45,8 +45,28 @@ public class Message {
         return message.array();
     }
 
-    public static boolean checkHandshake(byte[] handshake){
-        return true;
+    public static int parseHandshake(byte[] handshake){
+    	ByteBuffer message = ByteBuffer.allocate(32);
+        byte[] hello = ("HELLO").getBytes();
+        ByteBuffer zeros = ByteBuffer.allocate(23);
+
+        message.put(hello);
+        message.put(zeros);
+        
+        byte[] messageBytes = message.array();
+        
+        for (int i = 0; i < messageBytes.length; i++) {
+        	if (messageBytes[i] != handshake[i]) {
+        		return -1;
+        	}
+        }
+        
+        ByteBuffer remotePeerid = ByteBuffer.allocate(4);
+        for (int i = 0; i < 4; i++) {
+        	remotePeerid.put(handshake[messageBytes.length+i]);
+        }
+        
+        return Util.byteToInt(remotePeerid.array());
     }
 
     public byte getMessageType() {

@@ -70,6 +70,7 @@ public class Peer {
 		file = new byte[fileSize/pieceSize][];
 		bitfield = new byte[fileSize/pieceSize];
 		preferredRemotePeers = new ArrayList<RemotePeer>();
+		this.peerid = peerid;
 		
 		numberOfFilePieces = hasFile ? fileSize/pieceSize : 0;
 		if (hasFile) {
