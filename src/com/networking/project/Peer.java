@@ -173,7 +173,6 @@ public class Peer {
 		byte messageType = 0;
 		byte[] messagePayload = new byte[] {};
 		Message message = new Message(messageType, messagePayload);
-        peer.sendMessage(message);
         Log.logChoking(peerid, peer.getPeerid());
         peer.sendMessage(message);
 	}
