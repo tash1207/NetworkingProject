@@ -128,22 +128,6 @@ public class Peer {
 		}
 	}
 
-    public void readRemoteMessages(){
-        Iterator<RemotePeer> peerIterator = remotePeers.iterator();
-        RemotePeer remotePeer;
-        while (peerIterator.hasNext()){
-            remotePeer = peerIterator.next();
-            Message m = remotePeer.getNextIncomingMessage();
-
-            if (m != null){
-                System.out.println("Message from " + remotePeer.getPeerid() + ": " + Util.byteToHex(m.getMessageType()));
-                System.out.println("Payload from " + remotePeer.getPeerid() + ": " + Util.bytesToHex(m.getMessagePayload()));
-                System.out.println("--------------------------------------------------------------------------------");
-            }
-        }
-
-    }
-
 	public void setTimers() {
 		// Set timer for selecting new preferred neighbors
 		TimerTask task_preferred = new TimerTask() {
@@ -399,17 +383,24 @@ public class Peer {
 	public boolean removeInterestedRemotePeer(RemotePeer peer) {
 		return this.interestedRemotePeers.remove(peer);
 	}
-	
-	public void parseRemotePeerMessages() {
-		Iterator<RemotePeer> iter = remotePeers.iterator();
-		
-		while (iter.hasNext()) {
-			RemotePeer currentPeer = iter.next();
-			Message incomingMessage = currentPeer.getNextIncomingMessage();
-			parseAndReplyToMessage(incomingMessage, currentPeer);
-		}
-	}
-	
+
+    public void readRemoteMessages(){
+        Iterator<RemotePeer> peerIterator = remotePeers.iterator();
+        RemotePeer remotePeer;
+        while (peerIterator.hasNext()){
+            remotePeer = peerIterator.next();
+            Message m = remotePeer.getNextIncomingMessage();
+
+            if (m != null){
+                System.out.println("Message from " + remotePeer.getPeerid() + ": " + Util.byteToHex(m.getMessageType()));
+                System.out.println("Payload from " + remotePeer.getPeerid() + ": " + Util.bytesToHex(m.getMessagePayload()));
+                System.out.println("--------------------------------------------------------------------------------");
+                parseAndReplyToMessage(m, remotePeer);
+            }
+        }
+
+    }
+
 	public void setBitfield(byte[] newBitfield) {
 		bitfield = newBitfield;
 	}
@@ -455,7 +446,7 @@ public class Peer {
 
 		// bitfield
 		case 5:
-			ReesesPieces.receiveBitfield(remotePeer, bitfield, this);
+			ReesesPieces.receiveBitfield(remotePeer, msg.getMessagePayload(), bitfield, this);
 			break;
 
 		// request

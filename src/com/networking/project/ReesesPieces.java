@@ -13,9 +13,11 @@ public class ReesesPieces {
 		}
 	}
 	
-	public static void receiveBitfield(RemotePeer remotePeer, byte[] bitfield, Peer peer) {
+	public static void receiveBitfield(RemotePeer remotePeer, byte[] remoteBitfield, byte[] localBitfield, Peer peer) {
+        remotePeer.setBitfield(remoteBitfield);
+
 		// should I send an interested or non interested message?
-		if (remotePeer.hasInterestingPieces(bitfield)) {
+		if (remotePeer.hasInterestingPieces(localBitfield)) {
 			peer.interested(remotePeer);
 		} else {
 			peer.notInterested(remotePeer);

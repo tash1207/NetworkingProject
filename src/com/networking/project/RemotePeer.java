@@ -44,6 +44,10 @@ public class RemotePeer implements Connectable{
 		return peerid;
 	}
 
+    public void setBitfield(byte[] bitfield) {
+        this.bitfield = bitfield;
+    }
+
 	/**
 	 * Compares two bitfields and sees if there is anything of interest.
 	 * Meaning if there is a piece that this remote peer has that the input
@@ -54,8 +58,8 @@ public class RemotePeer implements Connectable{
 	public boolean hasInterestingPieces(byte[] peerBitfield) {
 		// Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
 		for (int i = 0; i < bitfield.length; i++) {
-			for (int j = 1; j != 0; j = j<<1 ) {
-				if ((bitfield[i] & j) > (peerBitfield[i] & j)) {
+			for (int j = 1; j < 512; j = j<<1 ) {
+				if ((peerBitfield[i] & j) < (bitfield[i] & j)) {
 					return true;
 				}
 			}
