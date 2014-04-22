@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -187,7 +188,17 @@ public class Log {
 		}
 	}
 	
-	public static void writeCompleteFile(String fileName, byte[][] file) {
+	public static void writeCompleteFile(String fileName, byte[][] file, int fileSize, int peerid) {
+		
+		ByteBuffer buf = ByteBuffer.allocate(file[0].length*file.length);
+		for (int i = 0; i < file.length; i++) {
+			for (int j = 0; j < file[i].length; j++) {
+				buf.put(file[i][j]);
+			}
+		}
+		buf.position(0);
+		buf.limit(fileSize);
+		ByteBuffer fileBuf = buf.slice();
 		try {
 			File completeFile = new File("peer_" + peerid + "/" + fileName);
 			BufferedOutputStream bos = null;
@@ -197,9 +208,7 @@ public class Log {
 			
 			bos = new BufferedOutputStream(fos);
 			
-			for (int i = 0; i < file.length; i++) {
-				bos.write(file[i]);
-			}
+			bos.write(fileBuf.array());
 			bos.close();
 			fos.close();
 		} catch (IOException e) {

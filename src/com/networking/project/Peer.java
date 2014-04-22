@@ -493,7 +493,7 @@ public class Peer {
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield, this, remotePeer, file, fileName);
+			ReesesPieces.receivePiece(msg, bitfield, this, remotePeer, file, fileName, fileSize);
 			break;	
 		default:
 				break;

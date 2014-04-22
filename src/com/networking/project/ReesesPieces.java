@@ -67,7 +67,7 @@ public class ReesesPieces {
 	
 
 	public static void receivePiece(Message msg, byte[] bitfield, Peer peer, RemotePeer remotePeer,
-			byte[][] file, String fileName) {
+			byte[][] file, String fileName, int fileSize) {
 		remotePeer.clearOngoingRequest();
 	
 		// piece segment is being received
@@ -105,7 +105,7 @@ public class ReesesPieces {
 		
 		if (peer.isFileFinishedDownloading()) {
 			Log.logCompletionOfDownload(peer.getPeerid());
-			Log.writeCompleteFile(fileName, file);
+			Log.writeCompleteFile(fileName, file, fileSize, peer.getPeerid());
 		}
 	}
 }
