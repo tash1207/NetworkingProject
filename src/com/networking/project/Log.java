@@ -196,9 +196,11 @@ public class Log {
 				buf.put(file[i][j]);
 			}
 		}
-		buf.position(0);
-		buf.limit(fileSize);
-		ByteBuffer fileBuf = buf.slice();
+		byte[] bufferArray = buf.array();
+		ByteBuffer fileBuf = ByteBuffer.allocate(fileSize);
+		for (int i = 0; i < fileSize; i++) {
+			fileBuf.put(bufferArray[i]);
+		}
 		try {
 			File completeFile = new File("peer_" + peerid + "/" + fileName);
 			BufferedOutputStream bos = null;
