@@ -70,21 +70,23 @@ public class Peer {
 		interestedRemotePeers = new HashSet<RemotePeer>();
 		chokedRemotePeers = new ArrayList<RemotePeer>();
 		unchokedRemotePeers = new ArrayList<RemotePeer>();
-		file = new byte[fileSize/pieceSize][];
-		bitfield = new byte[fileSize/pieceSize];
+		file = new byte[(int) Math.ceil((double) fileSize/pieceSize)][];
+		bitfield = new byte[(int) Math.ceil(fileSize/(pieceSize * 8.))];
 		preferredRemotePeers = new ArrayList<RemotePeer>();
 		this.peerid = peerid;
 		
 		numberOfFilePieces = hasFile ? fileSize/pieceSize : 0;
 		if (hasFile) {
 			// Initialize bitfield to all 1s
-            for (int i=0; i<bitfield.length; i++ ) {
+            for (int i=0; i<bitfield.length-1; i++ ) {
 				bitfield[i] = (byte) 0xff;
 			}
+            bitfield[bitfield.length-1] = (byte) (0xff<<(8-((fileSize/pieceSize)%8)));
+
             byte[] bytes = new byte[pieceSize];
             try {
             	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("peer_" + peerid + "/" + fileName));
-            	for (int i = 0; i < fileSize / pieceSize; i++) {
+            	for (int i = 0; i < Math.ceil(fileSize / pieceSize); i++) {
             		buf.read(bytes, 0, pieceSize);
             		file[i] = bytes;
             	}
