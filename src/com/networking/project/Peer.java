@@ -84,6 +84,10 @@ public class Peer {
     	return numberOfFilePieces;
     }
     
+    public boolean isFileFinishedDownloading() {
+    	return numberOfFilePieces == fileSize;
+    }
+    
     public void incrementNumberOfFilePieces() {
     	numberOfFilePieces += 1;
     }

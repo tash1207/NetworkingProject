@@ -102,5 +102,9 @@ public class ReesesPieces {
 		peer.setFile(file);
 		peer.incrementNumberOfFilePieces();
 		Log.logDownloadedPiece(peer.getPeerid(), remotePeer.getPeerid(), pieceIndex, peer.getNumberOfFilePieces());
+		
+		if (peer.isFileFinishedDownloading()) {
+			Log.logCompletionOfDownload(peer.getPeerid());
+		}
 	}
 }
