@@ -24,8 +24,8 @@ public class RemotePeerConnection implements Runnable{
 		this.port = port;
 
         try {
-            // TODO log tcp connection after creating a socket
             sock = new Socket(hostname, port);
+            Log.logTcpConnection(peerid, remotePeer.getPeerid());
 
             this.checkHandshake(sock, peerid);
         } catch (IOException e) {

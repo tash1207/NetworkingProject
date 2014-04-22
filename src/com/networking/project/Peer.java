@@ -29,6 +29,7 @@ public class Peer {
     private ConcurrentLinkedQueue<RemotePeer> remotePeers;
 	private ArrayList<RemotePeer> chokedRemotePeers;
 	private ArrayList<RemotePeer> unchokedRemotePeers;
+	private ArrayList<RemotePeer> preferredRemotePeers;
 	private HashSet<RemotePeer> interestedRemotePeers;
 	private byte[][] file;
 
@@ -63,9 +64,9 @@ public class Peer {
 		unchokedRemotePeers = new ArrayList<RemotePeer>();
 		file = new byte[fileSize/pieceSize][];
 		bitfield = new byte[fileSize/pieceSize];
+		preferredRemotePeers = new ArrayList<RemotePeer>();
 
         setTimers();
-		// TODO instantiate remotePeers and call setTimers();
     }
 
     public byte[] getBitfield (){
@@ -112,15 +113,14 @@ public class Peer {
         }
 
     }
-	
+
 	public void setTimers() {
-        /* TODO fix this
 		// Set timer for selecting new preferred neighbors
 		TimerTask task_preferred = new TimerTask() {
 			
 			@Override
 			public void run() {
-				selectNewPreferredNeighbors();
+				PeerDoes.chokeAndUnchoke(Peer.this, preferredRemotePeers, selectNewPreferredNeighbors());
 			}
 		};
 		Timer timer_preferred = new Timer();
@@ -136,7 +136,7 @@ public class Peer {
 		};
 		Timer timer_unchoke = new Timer();
 		timer_unchoke.scheduleAtFixedRate(task_unchoke, 0, optimisticUnchokingInterval * 1000);
-		*/
+
 
         // Set timer for reading messages
         TimerTask taskRemoteMessages = new TimerTask() {
@@ -302,7 +302,7 @@ public class Peer {
 	    		i++;
 	    	}
     	}
-    	
+    	preferredRemotePeers = preferredNeighbors;
     	Log.logPreferredNeighbors(peerid, preferredNeighbors);
 
     	return preferredNeighbors;
