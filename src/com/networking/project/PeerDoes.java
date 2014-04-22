@@ -113,4 +113,21 @@ public class PeerDoes {
 		}
 	}
 
+
+    /**
+     * Check if all peers have downloaded everything, and shutdown if that was the case.
+     */
+    public static void checkIfNetworkIsDone(Peer peer, ConcurrentLinkedQueue<RemotePeer> remotePeers){
+        if (peer.isFileFinishedDownloading() && remotePeers.size() > 0){
+            boolean allDone = true;
+            for (RemotePeer rp : remotePeers) {
+                allDone &= !rp.isInterestedInPeerBitfield(peer.getBitfield());
+            }
+
+            if (allDone){
+                System.out.println("Done, shutting down peer: " + peer.getPeerid());
+                //System.exit(0);
+            }
+        }
+    }
 }

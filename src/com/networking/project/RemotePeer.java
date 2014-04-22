@@ -96,10 +96,26 @@ public class RemotePeer implements Connectable{
      * @return
      */
     public boolean hasInterestingPieces(byte[] peerBitfield) {
+        return compareBitfields(bitfield, peerBitfield);
+    }
+
+    public boolean isInterestedInPeerBitfield(byte[] peerBitfield) {
+        if (bitfield == null) return true;
+        return compareBitfields(peerBitfield, bitfield);
+    }
+
+    /**
+     * Compares two bitfields and sees if there is anything of interest.
+     * Meaning if there is a piece that this remote peer has that the input
+     * bitfield doesn't have.
+     * @param peerBitfield
+     * @return
+     */
+    public boolean compareBitfields(byte[] remoteBitfield, byte[] peerBitfield){
         // Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
-        for (int i = 0; i < bitfield.length; i++) {
+        for (int i = 0; i < remoteBitfield.length; i++) {
             for (int j = 1; j < 512; j = j<<1 ) {
-                if ((peerBitfield[i] & j) < (bitfield[i] & j)) {
+                if ((peerBitfield[i] & j) < (remoteBitfield[i] & j)) {
                     return true;
                 }
             }
@@ -133,7 +149,7 @@ public class RemotePeer implements Connectable{
 		//ByteBuffer pieceBitfield = ByteBuffer.allocate(peerBitfield.length);
 		//int pieceIndex = indices.get((int)(Math.random() * indices.size()));
 	}
-	
+
 	/**
 	 * Send a message to the remote peer. Will return true or false if the message was sent successfully.
 	 * @param m

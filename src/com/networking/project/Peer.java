@@ -210,7 +210,8 @@ public class Peer {
 	}
 
     public void peerDoesLoop(){
-       PeerDoes.makeRequestsToRemotePeers(this, remotePeers);
+        PeerDoes.makeRequestsToRemotePeers(this, remotePeers);
+        PeerDoes.checkIfNetworkIsDone(this, remotePeers);
     }
 
 	public void choke(RemotePeer peer) {
