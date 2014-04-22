@@ -26,7 +26,7 @@ public class Util {
         hexChars[1] = hexArray[v & 0x0F];
         return new String(hexChars);
     }
-    
+
     public static int byteToInt(byte[] bytes) {
     	int byteInt = 0;
     	int byteLength = bytes.length;
@@ -42,5 +42,9 @@ public class Util {
     	ByteBuffer b = ByteBuffer.allocate(4);
     	b.putInt(number);
     	return b.array();
+    }
+
+    public static byte[] populateBitfield(String fileDir, String fileName, byte[] bitfield){
+        return null;
     }
 }

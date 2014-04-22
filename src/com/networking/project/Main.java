@@ -2,6 +2,7 @@ package com.networking.project;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 
@@ -36,7 +37,7 @@ public class Main {
 
         System.out.println("Spawning second peer");
         Peer peer2 = new Peer(2,4003);
-        Main.bootstrapPeer(peer2,2,reversePeerConfig);
+        Bootstrap.bootstrapPeer(peer2, 2, reversePeerConfig);
 
         try {
             Thread.sleep(1000);
@@ -48,28 +49,11 @@ public class Main {
         //TODO fix this bug here, the remote peer id is one when it should be 2
         //peer2.chokeAllRemotePeers();
 
+        File folder = new File("");
+        File[] listOfFiles = folder.listFiles();
 
-	}
-
-    /**
-     * Connects a given Peer to all the previous peerids
-     */
-    public static void bootstrapPeer(Peer peer, int peerid,  HashMap<Integer, String> reversePeerConfig){
-        int currentPeerid = peerid - 1;
-
-        while (currentPeerid > 0){
-            String address = reversePeerConfig.get(currentPeerid);
-            String hostname = address.split(":")[0];
-            String port = address.split(":")[1];
-
-            RemotePeer remote = new RemotePeer(1, "localhost", 4002);
-            remote.startConnection();
-
-            peer.onRemotePeerConnect(remote);
-
-            currentPeerid--;
-        }
 
     }
+
 
 }
