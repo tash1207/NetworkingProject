@@ -2,6 +2,7 @@ package com.networking.project;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class Peer {
     public Peer(int peerid, int port, boolean hasFile) {
 
         this.peerid = peerid;
+        new File("peer_" + peerid).mkdir();
 
         ListeningServer listeningServer = new ListeningServer(this, peerid, port);
         (new Thread(listeningServer)).start();
