@@ -29,7 +29,6 @@ public class Main {
 				System.out.println("Spawning peer " + peerid);
 				Peer peer = new Peer(peerid, port, hasFile);
 				Bootstrap.bootstrapPeer(peer, peerid, reversePeerConfig);
-				peer.chokeAllRemotePeers();
 			}
 			
 			in.close();
