@@ -49,10 +49,6 @@ public class Main {
         //TODO fix this bug here, the remote peer id is one when it should be 2
         //peer2.chokeAllRemotePeers();
 
-        File folder = new File("");
-        File[] listOfFiles = folder.listFiles();
-
-
     }
 
 
