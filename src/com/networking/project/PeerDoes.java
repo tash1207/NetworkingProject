@@ -1,6 +1,8 @@
 package com.networking.project;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by marco on 4/16/14.
@@ -34,6 +36,7 @@ public class PeerDoes {
         localPeer.request(remotePeer, randPieceIndex);
     }
 
+
 	/**
 	 * Called after Peer selectNewPreferredNeighbors() Does the appropriate
 	 * choking and unchoking of preferred neighbors
@@ -54,5 +57,33 @@ public class PeerDoes {
 			peer.choke(remotePeer);
 		}
 	}
+
+    /**
+     * Single place where requests come from.
+     * It'll check if the remote peer is unchoked and it doesn't have an ongoing request
+     *
+     * @param localPeer
+     * @param remotePeers
+     *
+     * @author Polar Bear
+     */
+    public static void makeRequestsToRemotePeers(Peer localPeer, ConcurrentLinkedQueue<RemotePeer> remotePeers) {
+        Iterator<RemotePeer> peerIterator = remotePeers.iterator();
+        RemotePeer remotePeer;
+        while (peerIterator.hasNext()) {
+            remotePeer = peerIterator.next();
+
+            //Check if we are unchoked from this peer
+            if (remotePeer.amIChoked() == false){
+                // Check if there is an ongoing request to this peer
+                if (remotePeer.hasOngoingRequest() == false){
+                    remotePeer.markOngoingRequest();
+                    PeerDoes.sendRequest(localPeer, remotePeer);
+                }
+            }
+        }
+
+    }
+
 
 }

@@ -7,11 +7,8 @@ public class ReesesPieces {
 	}
 	
 	public static void receiveUnchoke(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
-		// should be sending back a request message
-		byte[] pieceIndex = remotePeer.retrieveRandomInterestingPiece(bitfield);
-		if (pieceIndex != null) {
-		    peer.request(remotePeer, pieceIndex);
-		}
+        // We'll mark that this peer has unchoked us, so when we send requests the will show up
+        remotePeer.setUnchoked();
 	}
 	
 	public static void receivedInterested() {

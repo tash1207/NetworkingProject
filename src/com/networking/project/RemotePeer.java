@@ -20,6 +20,9 @@ public class RemotePeer implements Connectable{
 	private ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
     private ConcurrentLinkedQueue<Message> outgoingMessageQueue = new ConcurrentLinkedQueue<Message>();
 
+    private boolean isChoked = true;
+    private boolean onGoingRequest = false;
+
     private Queue<Connectable> connectablesToNotify;
 
 	public RemotePeer(int peerid, String hostname, int port){
@@ -56,6 +59,29 @@ public class RemotePeer implements Connectable{
 		}
 		return false;
 	}
+
+    public boolean amIChoked(){
+        return isChoked;
+    }
+
+    public void setChoked(){
+        isChoked = true;
+    }
+    public void setUnchoked(){
+        isChoked = false;
+    }
+
+    public boolean hasOngoingRequest(){
+        return onGoingRequest;
+    }
+
+    public void markOngoingRequest(){
+        onGoingRequest = true;
+    }
+
+    public void clearOngoingRequest(){
+        onGoingRequest = false;
+    }
 	
 	/**
 	 * Returns a bitfield that contains a 1 for a random piece that the
