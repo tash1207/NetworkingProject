@@ -10,7 +10,7 @@ public class Bootstrap {
     /**
      * Connects a given Peer to all the previous peerids
      */
-    public static void bootstrapPeer(Peer peer, int peerid,  HashMap<Integer, String> reversePeerConfig){
+    public static void bootstrapPeer(Peer peer, int peerid, HashMap<Integer, String> reversePeerConfig){
         int currentPeerid = peerid - 1;
 
         while (currentPeerid > 0){
@@ -18,10 +18,9 @@ public class Bootstrap {
             String hostname = address.split(":")[0];
             String port = address.split(":")[1];
 
-            RemotePeer remote = new RemotePeer(currentPeerid, "localhost", 4002);
+            RemotePeer remote = new RemotePeer(currentPeerid, hostname, Integer.valueOf(port));
             remote.startConnection();
             Log.logTcpConnection(peerid, currentPeerid);
-
 
             peer.onRemotePeerConnect(remote);
 

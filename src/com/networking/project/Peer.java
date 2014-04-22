@@ -42,7 +42,7 @@ public class Peer {
     /**
      *  "Whenever a peer starts, it should read the file Common.cfg and set up the corresponding variables."
      */
-    public Peer(int peerid, int port) {
+    public Peer(int peerid, int port, boolean hasFile) {
 
         ListeningServer listeningServer = new ListeningServer(this, peerid, port);
         (new Thread(listeningServer)).start();
@@ -56,6 +56,9 @@ public class Peer {
 			fileName = values[3];
 			fileSize = Integer.parseInt(values[4]);
 			pieceSize = Integer.parseInt(values[5]);
+
+			System.out.println(numPreferredNeighbors + " " + unchokingInterval + " " + optimisticUnchokingInterval + " "
+			+ fileName + " " + fileSize + " " + pieceSize);
 		}
 		
 		remotePeers = new ConcurrentLinkedQueue<RemotePeer>();
@@ -66,8 +69,13 @@ public class Peer {
 		bitfield = new byte[fileSize/pieceSize];
 		preferredRemotePeers = new ArrayList<RemotePeer>();
 		
-		// TODO: set this to the number of partial file pieces saved to disk
-		numberOfFilePieces = 0;
+		numberOfFilePieces = hasFile ? fileSize/pieceSize : 0;
+		if (hasFile) {
+			// Initialize bitfield to all 1s
+			for (byte b : bitfield) {
+				b = (byte) 0xff;
+			}
+		}
 
         setTimers();
     }
@@ -85,7 +93,7 @@ public class Peer {
     }
     
     public boolean isFileFinishedDownloading() {
-    	return numberOfFilePieces == fileSize;
+    	return numberOfFilePieces == fileSize/pieceSize;
     }
     
     public void incrementNumberOfFilePieces() {
@@ -150,8 +158,9 @@ public class Peer {
 			
 			@Override
 			public void run() {
-				PeerDoes.chokeAndUnchokeOptimistic(Peer.this, getAndRemoveRandomChokedPeer(), 
-						preferredRemotePeers, remotePeers);
+				RemotePeer optUnchoke = getAndRemoveRandomChokedPeer();
+				if (optUnchoke != null)
+					PeerDoes.chokeAndUnchokeOptimistic(Peer.this, optUnchoke, preferredRemotePeers, remotePeers);
 			}
 		};
 		Timer timer_unchoke = new Timer();
@@ -285,16 +294,10 @@ public class Peer {
      * @return
      */
     public ArrayList<RemotePeer> selectNewPreferredNeighbors() {
-    	// Check if the peer has completed downloading the file
-    	boolean hasEntireFile = true;
-    	for (int i = 0; i < bitfield.length; i++) {
-    		if (bitfield[i] != 0xFFFF) hasEntireFile = false;
-    	}
-    	
     	ArrayList<RemotePeer> preferredNeighbors = new ArrayList<RemotePeer>();
     	
     	// Randomly select preferred neighbors if peer has entire file
-    	if (hasEntireFile) {
+    	if (isFileFinishedDownloading()) {
     		ArrayList<RemotePeer> interestedPeers = new ArrayList<RemotePeer>(interestedRemotePeers);
     		for (int i = 0; i < numPreferredNeighbors; i++) {
         		int index = (int)(Math.random() * interestedPeers.size());

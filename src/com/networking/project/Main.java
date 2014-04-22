@@ -2,7 +2,6 @@ package com.networking.project;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 
@@ -17,12 +16,20 @@ public class Main {
 			BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 			while((st = in.readLine()) != null) {
 				String[] tokens = st.split("\\s+");
-				System.out.println(tokens[0] + " " + tokens[1] + " " + tokens[2]);
+				int peerid = Integer.valueOf(tokens[0]);
+				String hostname = tokens[1];
+				int port = Integer.valueOf(tokens[2]);
+				boolean hasFile = Boolean.valueOf(tokens[3]);
 				
-				peerConfig.put(tokens[1] + ":" + tokens[2], Integer.valueOf(tokens[0]));
-				reversePeerConfig.put(Integer.valueOf(tokens[0]), tokens[1] + ":" + tokens[2]);
+				System.out.println(peerid + " " + hostname + " " + port);
 				
-				// TODO set peer bitfield with tokens[3]
+				peerConfig.put(hostname + ":" + port, peerid);
+				reversePeerConfig.put(peerid, hostname + ":" + port);
+
+				System.out.println("Spawning peer " + peerid);
+				Peer peer = new Peer(peerid, port, hasFile);
+				Bootstrap.bootstrapPeer(peer, peerid, reversePeerConfig);
+				peer.chokeAllRemotePeers();
 			}
 			
 			in.close();
@@ -31,20 +38,11 @@ public class Main {
 			System.out.println(ex.toString());
 		}
 
-
-        System.out.println("Spawning first peer");
-        Peer peer = new Peer(1,4002);
-
-        System.out.println("Spawning second peer");
-        Peer peer2 = new Peer(2,4003);
-        Bootstrap.bootstrapPeer(peer2, 2, reversePeerConfig);
-
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        peer2.chokeAllRemotePeers();
 
         //TODO fix this bug here, the remote peer id is one when it should be 2
         //peer2.chokeAllRemotePeers();
