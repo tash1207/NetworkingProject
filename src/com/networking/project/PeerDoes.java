@@ -42,7 +42,8 @@ public class PeerDoes {
 	 * choking and unchoking of preferred neighbors
 	 * @author Tasha
 	 */
-	public static void chokeAndUnchoke(Peer peer, ArrayList<RemotePeer> prevPreferred, ArrayList<RemotePeer> newPreferred) {
+	public static void chokeAndUnchokePreferred(Peer peer, ArrayList<RemotePeer> prevPreferred, 
+			ArrayList<RemotePeer> newPreferred) {
 		// Unchoke new preferred peers that were not previously preferred peers
 		for (RemotePeer remotePeer : newPreferred) {
 			// If they were previously preferred neighbors, don't need to send unchoke
@@ -85,5 +86,24 @@ public class PeerDoes {
 
     }
 
+	/**
+	 * Called after Peer selectNewPreferredNeighbors() Does the appropriate
+	 * choking and unchoking of preferred neighbors
+	 * @author Tasha
+	 */
+	public static void chokeAndUnchokeOptimistic(Peer peer, RemotePeer optUnchoked, ArrayList<RemotePeer> preferred, 
+			ConcurrentLinkedQueue<RemotePeer> remotePeers) {
+		// Unchoke the optimistically unchoked remote peer
+		peer.unchoke(optUnchoked);
+		// Choke everyone who isn't preferred or optimistically unchoked
+		Iterator<RemotePeer> it = remotePeers.iterator();
+		RemotePeer remotePeer;
+		while (it.hasNext()) {
+			remotePeer = it.next();
+			if (!preferred.contains(remotePeer) && (remotePeer.getPeerid() != optUnchoked.getPeerid())) {
+				peer.choke(remotePeer);
+			}
+		}
+	}
 
 }

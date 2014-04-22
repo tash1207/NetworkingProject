@@ -124,7 +124,7 @@ public class Peer {
 			
 			@Override
 			public void run() {
-				PeerDoes.chokeAndUnchoke(Peer.this, preferredRemotePeers, selectNewPreferredNeighbors());
+				PeerDoes.chokeAndUnchokePreferred(Peer.this, preferredRemotePeers, selectNewPreferredNeighbors());
 			}
 		};
 		Timer timer_preferred = new Timer();
@@ -135,7 +135,8 @@ public class Peer {
 			
 			@Override
 			public void run() {
-				getAndRemoveRandomChokedPeer();
+				PeerDoes.chokeAndUnchokeOptimistic(Peer.this, getAndRemoveRandomChokedPeer(), 
+						preferredRemotePeers, remotePeers);
 			}
 		};
 		Timer timer_unchoke = new Timer();
@@ -327,7 +328,7 @@ public class Peer {
      * If there are no choked remote peers that are interested, then no peer is
      * returned.
      * 
-     * @return
+     * @return the new optimistically unchoked peer
      */
 	public RemotePeer getAndRemoveRandomChokedPeer() {
 		if (interestedRemotePeers.size() == 0) {
