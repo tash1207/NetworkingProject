@@ -127,10 +127,7 @@ public class RemotePeer implements Connectable{
     	int mask = 1;
 		mask = mask << (7 - (pieceIndex % 8));
 
-		if ((bitfield[pieceIndex / 8] & mask) == 0) {
-			// we do not have the piece
-			return;
-		}
+		bitfield[pieceIndex / 8] |= mask;
     }
 
 	/**
