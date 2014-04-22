@@ -83,14 +83,14 @@ public class Peer {
 			}
             byte[] bytes = new byte[pieceSize];
             try {
-            	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("path_" + peerid + "/" + fileName));
+            	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("peer_" + peerid + "/" + fileName));
             	for (int i = 0; i < fileSize / pieceSize; i++) {
             		buf.read(bytes, 0, pieceSize);
             		file[i] = bytes;
             	}
             	buf.close();
             } catch (IOException e) {
-            	
+                e.printStackTrace();
             }
             
             
