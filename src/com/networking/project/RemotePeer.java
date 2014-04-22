@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RemotePeer implements Connectable{
 
+
+    private int bytesDownloadedSoFar = 0;
+
 	private byte[] bitfield;
 	
 	private int peerid;
@@ -100,7 +103,9 @@ public class RemotePeer implements Connectable{
      * @return
      */
     public int getDownloadRate() {
-        return 0;
+        int t = bytesDownloadedSoFar;
+        bytesDownloadedSoFar = 0;
+        return t;
     }
 
     public Message getNextIncomingMessage() {
@@ -111,6 +116,7 @@ public class RemotePeer implements Connectable{
         // Parse the byte data into a message
 
         System.out.println("Remote peer got a message!");
+        bytesDownloadedSoFar += message.length;
 
         Message parsedMessage = new Message(message);
 
