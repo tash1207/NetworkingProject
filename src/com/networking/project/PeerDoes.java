@@ -11,7 +11,6 @@ public class PeerDoes {
 
     public static void sendRequest(Peer localPeer, RemotePeer remotePeer) {
         byte[] localBitfield = localPeer.getBitfield();
-        System.out.println("making a request");
         ArrayList<Integer> indices = remotePeer.retrieveInterestingPieces(localBitfield);
 
         ArrayList<Integer> validIndices = new ArrayList<Integer>();
@@ -33,6 +32,9 @@ public class PeerDoes {
             localPeer.markRequested(randPieceIndex);
 
             localPeer.request(remotePeer, randPieceIndex);
+            remotePeer.markOngoingRequest();
+
+            System.out.println("making a request for: "+ randPieceIndex);
         }
     }
 
@@ -84,7 +86,6 @@ public class PeerDoes {
             if (remotePeer.amIChoked() == false){
                 // Check if there is an ongoing request to this peer
                 if (remotePeer.hasOngoingRequest() == false){
-                    remotePeer.markOngoingRequest();
                     PeerDoes.sendRequest(localPeer, remotePeer);
                 }
             }
