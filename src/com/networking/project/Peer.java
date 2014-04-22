@@ -363,6 +363,7 @@ public class Peer {
 		this.chokedRemotePeers.remove(randomChokedPeer);
 		this.unchokedRemotePeers.add(randomChokedPeer);
 
+		Log.logOptimisticallyUnchokedNeighbor(peerid, randomChokedPeer.getPeerid());
 		return randomChokedPeer;
 	}
 	
@@ -411,48 +412,50 @@ public class Peer {
 	/**
 	 * Parses a message and responds appropriately.
 	 */
-	public void parseAndReplyToMessage(Message msg, RemotePeer peer) {
+	public void parseAndReplyToMessage(Message msg, RemotePeer remotePeer) {
 		byte messageType = msg.getMessageType();
 		switch(messageType) {
 		// choke
 		case 0:
-			ReesesPieces.receivedChoke();
+			Log.logChoking(peerid, remotePeer.getPeerid());
+			remotePeer.setChoked();
 			break;
 
 		// unchoke
 		case 1:
-			ReesesPieces.receiveUnchoke(msg, peer, bitfield, this);
+			Log.logUnchoking(peerid, remotePeer.getPeerid());
+			remotePeer.setUnchoked();
 			break;
 
 		// interested
 		case 2:
-			Log.logInterested(peerid, peer.getPeerid());
-			this.addInterestedRemotePeer(peer);
+			Log.logInterested(peerid, remotePeer.getPeerid());
+			this.addInterestedRemotePeer(remotePeer);
 			break;
 
 		// uninterested
 		case 3:
-			Log.logNotInterested(peerid, peer.getPeerid());
-			this.removeInterestedRemotePeer(peer);
+			Log.logNotInterested(peerid, remotePeer.getPeerid());
+			this.removeInterestedRemotePeer(remotePeer);
 			break;
 
 		// have
 		case 4:
-			ReesesPieces.receiveHave(msg, peer, bitfield, this);
+			ReesesPieces.receiveHave(msg, remotePeer, bitfield, this);
 			break;
 
 		// bitfield
 		case 5:
-			ReesesPieces.receiveBitfield(peer, bitfield, this);
+			ReesesPieces.receiveBitfield(remotePeer, bitfield, this);
 			break;
 
 		// request
 		case 6:
-			ReesesPieces.receiveRequest(msg, bitfield, this, peer, pieceSize, file);
+			ReesesPieces.receiveRequest(msg, bitfield, this, remotePeer, pieceSize, file);
 			break;
 		// piece 
 		case 7:
-			ReesesPieces.receivePiece(msg, bitfield, this, peer, file);
+			ReesesPieces.receivePiece(msg, bitfield, this, remotePeer, file);
 			break;	
 		default:
 				break;

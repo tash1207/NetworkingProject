@@ -2,15 +2,6 @@ package com.networking.project;
 
 public class ReesesPieces {
 
-	public static void receivedChoke() {
-		
-	}
-	
-	public static void receiveUnchoke(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
-        // We'll mark that this peer has unchoked us, so when we send requests the will show up
-        remotePeer.setUnchoked();
-	}
-	
 	public static void receiveHave(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		Log.logHave(peer.getPeerid(), remotePeer.getPeerid(), Util.byteToInt(msg.getMessagePayload()));
 		
