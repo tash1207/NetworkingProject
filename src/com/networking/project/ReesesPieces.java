@@ -4,7 +4,8 @@ public class ReesesPieces {
 
 	public static void receiveHave(Message msg, RemotePeer remotePeer, byte[] bitfield, Peer peer) {
 		Log.logHave(peer.getPeerid(), remotePeer.getPeerid(), Util.byteToInt(msg.getMessagePayload()));
-		
+		//update remote peer bitfield
+		remotePeer.updateBitfieldWithHave(msg.getMessagePayload());
 		// should I send an interested or non interested message?
 		if (remotePeer.hasInterestingPieces(bitfield)) {
 		    peer.interested(remotePeer);

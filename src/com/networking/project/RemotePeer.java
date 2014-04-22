@@ -122,6 +122,12 @@ public class RemotePeer implements Connectable{
         }
         return false;
     }
+    
+    public void updateBitfieldWithHave(byte[] have) {
+    	for (int i = 0; i < have.length; i++) {
+    		bitfield[i] |= have[i];
+    	}
+    }
 
 	/**
 	 * Returns a bitfield that contains a 1 for a random piece that the
