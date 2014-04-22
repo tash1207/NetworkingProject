@@ -189,7 +189,7 @@ public class Log {
 	
 	public static void writeCompleteFile(String fileName, byte[][] file) {
 		try {
-			File completeFile = new File(fileName);
+			File completeFile = new File("peer_" + peerid + "/" + fileName);
 			BufferedOutputStream bos = null;
 
 			//create an object of FileOutputStream
