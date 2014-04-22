@@ -48,25 +48,6 @@ public class RemotePeer implements Connectable{
         this.bitfield = bitfield;
     }
 
-	/**
-	 * Compares two bitfields and sees if there is anything of interest.
-	 * Meaning if there is a piece that this remote peer has that the input
-	 * bitfield doesn't have.
-	 * @param peerBitfield
-	 * @return
-	 */
-	public boolean hasInterestingPieces(byte[] peerBitfield) {
-		// Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
-		for (int i = 0; i < bitfield.length; i++) {
-			for (int j = 1; j < 512; j = j<<1 ) {
-				if ((peerBitfield[i] & j) < (bitfield[i] & j)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
     public void setPeerid(int peerid){
         this.peerid = peerid;
     }
@@ -106,7 +87,26 @@ public class RemotePeer implements Connectable{
     public void clearOngoingRequest(){
         onGoingRequest = false;
     }
-	
+
+    /**
+     * Compares two bitfields and sees if there is anything of interest.
+     * Meaning if there is a piece that this remote peer has that the input
+     * bitfield doesn't have.
+     * @param peerBitfield
+     * @return
+     */
+    public boolean hasInterestingPieces(byte[] peerBitfield) {
+        // Check if RemotePeer bitfield has a 1 where Peer bitfield has a 0
+        for (int i = 0; i < bitfield.length; i++) {
+            for (int j = 1; j < 512; j = j<<1 ) {
+                if ((peerBitfield[i] & j) < (bitfield[i] & j)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Returns a bitfield that contains a 1 for a random piece that the
 	 * remote peer has but the peer does not.
@@ -119,19 +119,15 @@ public class RemotePeer implements Connectable{
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
 		// assuming each bit is one index, i.e. if there are 4 bytes, 32 possible indices
-		for (int i = 0; i < bitfield.length; i++) {
-            for (int j = 0; j < 8; j++) {
-                int mask = 1 << j;
-				if ((bitfield[i] & j) > (peerBitfield[i] & j)) {
+        for (int i = 0; i < bitfield.length; i++) {
+            for (int j = 1; j < 8; j += 1 ) {
+                int mask = 1<<j;
+                if ((peerBitfield[i] & mask) < (bitfield[i] & mask)) {
 					indices.add(i*8 + (7-j));
 				}
 			}
 		}
 		
-		if (indices.isEmpty()) {
-			return null;
-		}
-
         return indices;
 
 		//ByteBuffer pieceBitfield = ByteBuffer.allocate(peerBitfield.length);

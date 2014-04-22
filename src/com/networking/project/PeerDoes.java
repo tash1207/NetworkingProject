@@ -26,14 +26,14 @@ public class PeerDoes {
         int size = validIndices.size();
         int randIndex = (int)Math.floor(Math.random() * size);
 
-        int randPieceIndex = validIndices.get(randIndex);
+        if (size > 0){
+            int randPieceIndex = validIndices.get(randIndex);
 
-        //remember what we requested
-        localPeer.markRequested(randPieceIndex);
+            //remember what we requested
+            localPeer.markRequested(randPieceIndex);
 
-
-
-        localPeer.request(remotePeer, randPieceIndex);
+            localPeer.request(remotePeer, randPieceIndex);
+        }
     }
 
     public static void sendBitfield(Peer localPeer, RemotePeer remotePeer){

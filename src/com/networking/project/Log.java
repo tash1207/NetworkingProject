@@ -171,7 +171,7 @@ public class Log {
 	
 	public static void writePartialFilePiece(int peerid, int pieceIndex, byte[] filePiece) {
 		try {
-			File partial = new File(".peer_" + peerid + "_" + pieceIndex);
+			File partial = new File("peer_" + peerid + "/part_" + pieceIndex);
 			BufferedOutputStream bos = null;
 
 			//create an object of FileOutputStream
@@ -203,7 +203,7 @@ public class Log {
 			bos.close();
 			fos.close();
 		} catch (IOException e) {
-			
+            e.printStackTrace();
 		}
 	}
 

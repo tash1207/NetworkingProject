@@ -70,23 +70,23 @@ public class Peer {
 		interestedRemotePeers = new HashSet<RemotePeer>();
 		chokedRemotePeers = new ArrayList<RemotePeer>();
 		unchokedRemotePeers = new ArrayList<RemotePeer>();
-		file = new byte[(int) Math.ceil((double) fileSize/pieceSize)][];
-		bitfield = new byte[(int) Math.ceil(fileSize/(pieceSize * 8.))];
+		file = new byte[calculateFilePieces(fileSize, pieceSize)][];
+		bitfield = new byte[calculateFilePieces(fileSize, pieceSize*8)];
 		preferredRemotePeers = new ArrayList<RemotePeer>();
 		this.peerid = peerid;
 		
-		numberOfFilePieces = hasFile ? fileSize/pieceSize : 0;
+		numberOfFilePieces = hasFile ? calculateFilePieces(fileSize, pieceSize) : 0;
 		if (hasFile) {
 			// Initialize bitfield to all 1s
             for (int i=0; i<bitfield.length-1; i++ ) {
 				bitfield[i] = (byte) 0xff;
 			}
-            bitfield[bitfield.length-1] = (byte) (0xff<<(8-((fileSize/pieceSize)%8)));
+            bitfield[bitfield.length-1] = (byte) (0xff<<(7-((fileSize/pieceSize)%8)));
 
             byte[] bytes = new byte[pieceSize];
             try {
             	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("peer_" + peerid + "/" + fileName));
-            	for (int i = 0; i < Math.ceil(fileSize / pieceSize); i++) {
+            	for (int i = 0; i < calculateFilePieces(fileSize, pieceSize); i++) {
             		buf.read(bytes, 0, pieceSize);
             		file[i] = bytes;
             	}
@@ -112,11 +112,15 @@ public class Peer {
     public int getNumberOfFilePieces() {
     	return numberOfFilePieces;
     }
-    
-    public boolean isFileFinishedDownloading() {
-    	return numberOfFilePieces == fileSize/pieceSize;
+
+    public int calculateFilePieces(double fileSize, int pieceSize){
+        return (int) Math.ceil(fileSize/pieceSize);
     }
-    
+
+    public boolean isFileFinishedDownloading() {
+    	return numberOfFilePieces == calculateFilePieces(fileSize, pieceSize);
+    }
+
     public void incrementNumberOfFilePieces() {
     	numberOfFilePieces += 1;
     }
