@@ -85,11 +85,19 @@ public class Peer {
 			}
             bitfield[bitfield.length-1] = (byte) (0xff<<(7-((fileSize/pieceSize)%8)));
 
-            byte[] bytes = new byte[pieceSize];
             try {
             	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("peer_" + peerid + "/" + fileName));
             	for (int i = 0; i < calculateFilePieces(fileSize, pieceSize); i++) {
-            		buf.read(bytes, 0, pieceSize);
+                    byte[] bytes = new byte[pieceSize];
+                    int length = pieceSize;
+
+                    if (i == calculateFilePieces(fileSize, pieceSize)-1){
+                        length = fileSize%pieceSize;
+                    }
+
+                    int k = buf.available();
+            		buf.read(bytes, 0, length);
+                    int j = buf.available();
             		file[i] = bytes;
             	}
             	buf.close();
