@@ -75,8 +75,8 @@ public class Peer {
 		numberOfFilePieces = hasFile ? fileSize/pieceSize : 0;
 		if (hasFile) {
 			// Initialize bitfield to all 1s
-			for (byte b : bitfield) {
-				b = (byte) 0xff;
+            for (int i=0; i<bitfield.length; i++ ) {
+				bitfield[i] = (byte) 0xff;
 			}
 		}
 
@@ -303,10 +303,12 @@ public class Peer {
     	// Randomly select preferred neighbors if peer has entire file
     	if (isFileFinishedDownloading()) {
     		ArrayList<RemotePeer> interestedPeers = new ArrayList<RemotePeer>(interestedRemotePeers);
-    		for (int i = 0; i < numPreferredNeighbors; i++) {
-        		int index = (int)(Math.random() * interestedPeers.size());
-        		preferredNeighbors.add(interestedPeers.get(index));
-    		}
+            if (interestedPeers.size() > 0) {
+                for (int i = 0; i < numPreferredNeighbors; i++) {
+                    int index = (int)(Math.random() * interestedPeers.size());
+                    preferredNeighbors.add(interestedPeers.get(index));
+                }
+            }
     	}
     	
     	// Otherwise, select interested remote peers with highest download rates

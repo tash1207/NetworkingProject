@@ -19,7 +19,7 @@ public class Main {
 				int peerid = Integer.valueOf(tokens[0]);
 				String hostname = tokens[1];
 				int port = Integer.valueOf(tokens[2]);
-				boolean hasFile = Boolean.valueOf(tokens[3]);
+				boolean hasFile = ("1".equals(tokens[3]));
 				
 				System.out.println(peerid + " " + hostname + " " + port);
 				

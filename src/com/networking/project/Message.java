@@ -93,9 +93,9 @@ public class Message {
         			        (serializedMessage[0] & 0xFF) << 24;
         	this.messageType = serializedMessage[4];
         	ByteBuffer b = ByteBuffer.allocate(messageLength - 1);
-        	
-        	for (int i = 5; i < messageLength - 1; i++) {
-        		b.put(serializedMessage[i]);
+
+        	for (int i = 0; i < messageLength - 1; i++) {
+        		b.put(serializedMessage[i+5]);
         	}
         	this.messagePayload = b.array();
         	
