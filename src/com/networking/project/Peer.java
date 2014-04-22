@@ -33,7 +33,7 @@ public class Peer {
 	private HashSet<RemotePeer> interestedRemotePeers;
 	private byte[][] file;
 
-    private HashSet<Integer>  requestedPieces;
+    private HashSet<Integer> requestedPieces = new HashSet<Integer>();
 
 
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -164,10 +164,22 @@ public class Peer {
         };
         Timer timerRemoteMessage = new Timer();
         timerRemoteMessage.scheduleAtFixedRate(taskRemoteMessages, 0, 1 * 1000);
+
+        // Set timer for the peer does loop
+        TimerTask taskPeerDoes = new TimerTask() {
+
+            @Override
+            public void run() {
+                peerDoesLoop();
+            }
+        };
+        Timer timerPeerDoes = new Timer();
+        timerPeerDoes.scheduleAtFixedRate(taskPeerDoes, 0, 1 * 1000);
 	}
 
-	public void sendHandshake(RemotePeer peer) {
-	}
+    public void peerDoesLoop(){
+       PeerDoes.makeRequestsToRemotePeers(this, remotePeers);
+    }
 
 	public void choke(RemotePeer peer) {
 		byte messageType = 0;
@@ -218,7 +230,7 @@ public class Peer {
 
 	public void request(RemotePeer peer, int pieceIndex) {
 		byte messageType = 6;
-        byte[] pieceIndexBuffer = ByteBuffer.allocate(4).putInt(1695609641).array();
+        byte[] pieceIndexBuffer = ByteBuffer.allocate(4).putInt(pieceIndex).array();
 
         Message message = new Message(messageType, pieceIndexBuffer);
 
