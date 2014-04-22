@@ -311,17 +311,20 @@ public class Peer {
      */
     public ArrayList<RemotePeer> selectNewPreferredNeighbors() {
     	ArrayList<RemotePeer> preferredNeighbors = new ArrayList<RemotePeer>();
-    	
-    	// Randomly select preferred neighbors if peer has entire file
-    	if (isFileFinishedDownloading()) {
-    		ArrayList<RemotePeer> interestedPeers = new ArrayList<RemotePeer>(interestedRemotePeers);
-            if (interestedPeers.size() > 0) {
-                for (int i = 0; i < numPreferredNeighbors; i++) {
-                    int index = (int)(Math.random() * interestedPeers.size());
-                    preferredNeighbors.add(interestedPeers.get(index));
-                }
-            }
-    	}
+
+		// Randomly select preferred neighbors if peer has entire file
+		if (isFileFinishedDownloading()) {
+			ArrayList<RemotePeer> interestedPeers = new ArrayList<RemotePeer>(interestedRemotePeers);
+			if (numPreferredNeighbors >= interestedPeers.size())
+				preferredNeighbors = interestedPeers;
+			else {
+				for (int i = 0; i < numPreferredNeighbors; i++) {
+					int index = (int) (Math.random() * interestedPeers.size());
+					preferredNeighbors.add(interestedPeers.get(index));
+					interestedPeers.remove(index);
+				}
+			}
+		}
     	
     	// Otherwise, select interested remote peers with highest download rates
     	else {
