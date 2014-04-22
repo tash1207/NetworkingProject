@@ -44,6 +44,8 @@ public class Peer {
      */
     public Peer(int peerid, int port, boolean hasFile) {
 
+        this.peerid = peerid;
+
         ListeningServer listeningServer = new ListeningServer(this, peerid, port);
         (new Thread(listeningServer)).start();
 
@@ -244,9 +246,10 @@ public class Peer {
         peer.sendMessage(message);
 	}
 
-    public boolean onRemotePeerConnect(RemotePeer peer){
+    public boolean onRemotePeerConnect(RemotePeer remotePeer){
         System.out.println("got a remote peer connected!!");
-        return remotePeers.offer(peer);
+        PeerDoes.sendBitfield(this, remotePeer);
+        return remotePeers.offer(remotePeer);
     }
 
 	public boolean onRemotePeerDisconnect(RemotePeer peer) {
