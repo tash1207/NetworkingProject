@@ -7,4 +7,4 @@
  cat PeerInfo.cfg | while read a; do echo $a | awk '{print "ssh ubuntu@"$2 " -i ~/.ssh/schoolProject.pem \"cd NetworkingProject; git pull origin amazon\""}' | sh  ; done
  cat PeerInfo.cfg | while read a; do echo $a | awk '{print "ssh ubuntu@"$2 " -i ~/.ssh/schoolProject.pem \"cd NetworkingProject; make clean \""}' | sh  ; done
  cat PeerInfo.cfg | while read a; do echo $a | awk '{print "ssh ubuntu@"$2 " -i ~/.ssh/schoolProject.pem \"cd NetworkingProject; make bin \""}' | sh  ; done
-cat PeerInfo.cfg | while read a; do echo $a | awk '{print "ssh -nf ubuntu@"$2 " -i ~/.ssh/schoolProject.pem \"cd NetworkingProject; make run peerid=" $1 "  \""}' | sh  ; sleep 6; done
+cat PeerInfo.cfg | while read a; do echo $a | awk '{print "ssh -nf ubuntu@"$2 " -i ~/.ssh/schoolProject.pem \"cd NetworkingProject; make run peerid=" $1 "  \""}' | sh  ; sleep 3; done
