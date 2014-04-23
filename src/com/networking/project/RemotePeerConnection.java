@@ -79,6 +79,7 @@ public class RemotePeerConnection implements Runnable{
             try {
                 is.read(msgLength);
 
+
                 //parse the msgLength byte array to an int.
                 int msgLengthInt =  msgLength[3] & 0xFF |
                                     (msgLength[2] & 0xFF) << 8 |
@@ -87,6 +88,7 @@ public class RemotePeerConnection implements Runnable{
 
                 byte[] restMsg = new byte[msgLengthInt];
 
+                Thread.sleep(1000);
                 is.read(restMsg);
 
                 ByteBuffer wholeMessage = ByteBuffer.allocate(4+msgLengthInt);
@@ -97,7 +99,7 @@ public class RemotePeerConnection implements Runnable{
                 remotePeer.appendReceivedMessageToQueue(wholeMessage.array());
                 System.out.println("Reading message");
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
