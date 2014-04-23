@@ -11,4 +11,4 @@ startRemotePeers:
 	java -classpath "./startRemote" StartRemotePeers
 
 run: bin
-	java -classpath "./bin" com.networking.project.Main $(peerid)
+	java -Xmx400M -classpath "./bin" com.networking.project.Main $(peerid)
