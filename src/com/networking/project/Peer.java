@@ -77,8 +77,14 @@ public class Peer {
 		preferredRemotePeers = new ArrayList<RemotePeer>();
 		this.peerid = peerid;
 		
+		String filePathString = "peer_" + peerid + "/" + fileName;
+    	File f = new File(filePathString);
+    	if (!f.exists()) {
+    		hasFile = false;
+    	}
 		numberOfFilePieces = hasFile ? calculateFilePieces(fileSize, pieceSize) : 0;
 		if (hasFile) {
+			
 			// Initialize bitfield to all 1s
             for (int i=0; i<bitfield.length-1; i++ ) {
 				bitfield[i] = (byte) 0xff;
@@ -86,7 +92,8 @@ public class Peer {
             bitfield[bitfield.length-1] = (byte) (0xff<<(7-((fileSize/pieceSize)%8)));
 
             try {
-            	BufferedInputStream buf = new BufferedInputStream(new FileInputStream("peer_" + peerid + "/" + fileName));
+            	
+            	BufferedInputStream buf = new BufferedInputStream(new FileInputStream(filePathString));
             	for (int i = 0; i < calculateFilePieces(fileSize, pieceSize); i++) {
                     byte[] bytes = new byte[pieceSize];
                     int length = pieceSize;
