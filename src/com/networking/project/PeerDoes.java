@@ -126,7 +126,7 @@ public class PeerDoes {
 
             if (allDone){
                 System.out.println("Done, shutting down peer: " + peer.getPeerid());
-                //System.exit(0);
+                System.exit(0);
             }
         }
     }
