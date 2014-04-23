@@ -7,8 +7,7 @@ clean:
 	rm -rf *.log
 
 startRemotePeers:
-	(cd startRemote && ./compileJava)
-	java -classpath "./startRemote" StartRemotePeers
+	./startRemote.sh
 
 run: bin
 	java -Xmx400M -classpath "./bin" com.networking.project.Main $(peerid)
