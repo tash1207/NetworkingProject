@@ -1,5 +1,7 @@
 package com.networking.project;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -46,5 +48,19 @@ public class Util {
 
     public static byte[] populateBitfield(String fileDir, String fileName, byte[] bitfield){
         return null;
+    }
+
+    public static void readBytesIntoByteArray(InputStream is, byte[] bytebuffer){
+        for (int i=0;i<bytebuffer.length; i++ ){
+            byte[] temp = new byte[1];
+            try {
+                is.read(temp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bytebuffer[i] = temp[0];
+        }
+
+
     }
 }
