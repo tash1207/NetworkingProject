@@ -67,7 +67,7 @@ public class StartRemotePeers {
 				
 				// *********************** IMPORTANT *************************** //
 				// If your program is JAVA, use this line.
-				Runtime.getRuntime().exec("ssh " + pInfo.peerAddress + " git clone  -b amazon ");
+				Runtime.getRuntime().exec("ssh " + pInfo.peerAddress + " -i ~/.ssh/schoolProject.pem 'git clone  -b amazon https://github.com/tash1207/NetworkingProject.git'");
 				Runtime.getRuntime().exec("ssh " + pInfo.peerAddress + " cd NetworkingProject; make run peerid=" + pInfo.peerId);
 				
 				// If your program is C/C++, use this line instead of the above line. 
