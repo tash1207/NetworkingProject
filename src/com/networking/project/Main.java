@@ -24,28 +24,27 @@ public class Main {
 			BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
 			while ((st = in.readLine()) != null) {
 				String[] tokens = st.split("\\s+");
+				int peerid = Integer.valueOf(tokens[0]);
+				String hostname = tokens[1];
+				int port = Integer.valueOf(tokens[2]);
+				boolean hasFile = ("1".equals(tokens[3]));
+
+				System.out.println(peerid + " " + hostname + " " + port);
+
+				peerConfig.put(hostname + ":" + port, peerid);
+				reversePeerConfig.put(peerid, hostname + ":" + port);
+
 				if ((whoAmI != null && whoAmI.equals(tokens[0]))) {
-					int peerid = Integer.valueOf(tokens[0]);
-					String hostname = tokens[1];
-					int port = Integer.valueOf(tokens[2]);
-					boolean hasFile = ("1".equals(tokens[3]));
-
-					System.out.println(peerid + " " + hostname + " " + port);
-
-					peerConfig.put(hostname + ":" + port, peerid);
-					reversePeerConfig.put(peerid, hostname + ":" + port);
-
-					System.out.println("Spawning peer " + peerid);
 					Peer peer = new Peer(peerid, port, hasFile);
 					Bootstrap.bootstrapPeer(peer, peerid, reversePeerConfig);
-					break;
+					System.out.println("Spawning peer " + peerid);
 				}
 			}
 			
 			in.close();
 		}
 		catch (Exception ex) {
-			System.out.println(ex.toString());
+			ex.printStackTrace();
 		}
 
         try {

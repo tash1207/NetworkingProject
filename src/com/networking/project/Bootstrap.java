@@ -15,6 +15,7 @@ public class Bootstrap {
 
         while (currentPeerid > 0){
             String address = reversePeerConfig.get(currentPeerid);
+            System.out.println("address: " + address);
             String hostname = address.split(":")[0];
             String port = address.split(":")[1];
 
