@@ -13,4 +13,4 @@ startRemotePeers:
 	java -classpath "./startRemote" StartRemotePeers
 
 run: bin
-	java -classpath "./bin" com.networking.project.Main
+	java -classpath "./bin" com.networking.project.Main $(peerid)
