@@ -7,6 +7,7 @@ clean:
 	rm -rf *.log
 
 startRemotePeers:
+	(cd startRemote && ./compileJava)
 	java -classpath "./startRemote" StartRemotePeers
 
 run: bin
