@@ -189,6 +189,10 @@ public class RemotePeer implements Connectable{
 
         Message parsedMessage = new Message(message);
 
+        if (parsedMessage.getMessagePayload() == null) {
+        	// this wasn't a good message
+        	return false;
+        }
         // put it into the queue
         return messageQueue.offer(parsedMessage);
     }

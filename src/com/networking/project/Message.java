@@ -29,6 +29,7 @@ public class Message {
 		this.messageType = messageType;
 		messageLength =  1 + messagePayload.length;
 	}
+	
 
     public static byte[] createHandshake(int peerid){
         ByteBuffer message = ByteBuffer.allocate(32);
@@ -86,6 +87,13 @@ public class Message {
 
     public Message(byte[] serializedMessage) {
     	try {
+    		if (serializedMessage.length < 4) {
+    			//checking for message validity
+    			this.messagePayload = null;
+    			this.messageType = -1;
+    			this.messageLength = -1;
+    			return;
+    		}
     		//parse the message here
         	this.messageLength = (serializedMessage[3] & 0xFF) |
         			        (serializedMessage[2] & 0xFF) << 8 |
