@@ -77,7 +77,7 @@ public class RemotePeerConnection implements Runnable{
             byte[] msgLength = new byte[4];
 
             try {
-                is.read(msgLength);
+                Util.readBytesIntoByteArray(is, msgLength);
 
 
                 //parse the msgLength byte array to an int.
@@ -88,8 +88,7 @@ public class RemotePeerConnection implements Runnable{
 
                 byte[] restMsg = new byte[msgLengthInt];
 
-                Thread.sleep(1000);
-                is.read(restMsg);
+                Util.readBytesIntoByteArray(is, restMsg);
 
                 ByteBuffer wholeMessage = ByteBuffer.allocate(4+msgLengthInt);
 
@@ -114,7 +113,7 @@ public class RemotePeerConnection implements Runnable{
             // We wait for a handshake
 
             byte[] handshakeReply = new byte[32];
-            is.read(handshakeReply);
+            Util.readBytesIntoByteArray(is, handshakeReply);
             remotePeerId = (Message.parseHandshake(handshakeReply));
 
 
