@@ -126,6 +126,12 @@ public class PeerDoes {
 
             if (allDone){
                 System.out.println("Done, shutting down peer: " + peer.getPeerid());
+                // Sleep for a bit so everyone is on the same page
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 System.exit(0);
             }
         }
